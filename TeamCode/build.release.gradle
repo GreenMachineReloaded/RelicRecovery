@@ -7,8 +7,3 @@ dependencies {
     compile (name:'WirelessP2p-release', ext:'aar')
     compile (name:'navx_ftc-release', ext:'aar')
 }
-repositories {
-    flatDir {
-        dirs 'libs', 'navx-micro\\navx-micro\\android\\libs'
-    }
-}
