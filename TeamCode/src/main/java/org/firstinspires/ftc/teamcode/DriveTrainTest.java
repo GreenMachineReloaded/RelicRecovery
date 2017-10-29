@@ -19,5 +19,4 @@ public class DriveTrainTest {
             motor1.setPower(0.5);
         }
     }
-
 }

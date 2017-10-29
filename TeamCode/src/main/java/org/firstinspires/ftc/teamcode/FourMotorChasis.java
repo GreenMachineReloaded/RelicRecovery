@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  * Created by pston on 10/15/2017
  */
 
-@TeleOp(name="Four Motor Test", group="Test")
+@TeleOp(name="Four Motor Test", group="DriveTrain")
 public class FourMotorChasis extends OpMode {
 
     private double x;
