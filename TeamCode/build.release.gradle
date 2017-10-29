@@ -8,6 +8,6 @@ dependencies {
 }
 repositories {
     flatDir {
-        dirs 'libs', 'C:\\Users\\pston\\GMR\\GMR2016-2017\\RelicRecovery\\navx-micro\\navx-micro\\android\\libs'
+        dirs 'libs', 'navx-micro\\navx-micro\\android\\libs'
     }
 }

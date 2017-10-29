@@ -39,11 +39,8 @@ public class DriveTrain {
 
     //variables for gyro sensor
     private float goalDegrees;
-    // ???
     private int goalPosition;
-    // ???
     private int gyroRange;
-    // ???
     private static final double     countsPerMotorRev    = 1440 ;
     private static final double     driveGearReduction    = 1.5 ;
     private static final double     wheelDiameterInches   = 4.0 ;
@@ -75,19 +72,19 @@ public class DriveTrain {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CONSTRUCT
     //calls the second constructor of DriveTrain and passes a reference to the hardware map, telemetry, the 4 string names of the motors in the order left front, right front, left back, right back and the port reference to the gyro.
-    public DriveTrain(HardwareMap hardwareMap, Telemetry telemetry) {
+    public DriveTrain(DcMotor leftFront, DcMotor rightFront, DcMotor leftRear, DcMotor rightRear, AHRS gyro, Telemetry telemetry) {
         telemetry.addData("DriveTrain Startup", "Beginning");
         telemetry.update();
         //setup for all the motors.
         //setup for all the front motors.
-        this.leftFront = hardwareMap.dcMotor.get(LeftFront);
+        this.leftFront = leftFront;
         //setup for the left front motor.
-        this.rightFront = hardwareMap.dcMotor.get(RightFront);
+        this.rightFront = rightFront;
         //setup for the right front motor.
         //setup for all the back motors.
-        this.leftRear = hardwareMap.dcMotor.get(LeftRear);
+        this.leftRear = leftRear;
         //setup for the left back motor.
-        this.rightRear = hardwareMap.dcMotor.get(RightRear);
+        this.rightRear = rightRear;
         //setup for the right back motor.
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -95,14 +92,15 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //sets all the motors power to zero.
-        //do we need this?
+        //sets all the motors power to zero, this prevents the motors from spinning at the beginning of the program
         this.leftFront.setPower(0);
         this.rightFront.setPower(0);
         this.leftRear.setPower(0);
         this.rightRear.setPower(0);
+
         //gyro sensor setup.
-        this.gyro = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"), gyroPort, AHRS.DeviceDataType.kProcessedData);
+        //this.gyro = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"), gyroPort, AHRS.DeviceDataType.kProcessedData);
+        this.gyro = gyro;
         //sets up the gyro sensor.
         this.gyro.zeroYaw();
         gyroReset = gyro.getDimStateTrackerInstance();
@@ -110,16 +108,13 @@ public class DriveTrain {
         //sets the gyro sensors position to zero.
         gyroReset.reset();
 
-        //miss setup
+        //misc setup
 
         this.goalDegrees = -1;
-        // ???
         this.goalPosition = -1;
-        // ???
         this.gyroRange = 3;
 
         this.telemetry = telemetry;
-        //do we need this?
         this.encodersCanRun = true;
         this.goalEncoderPosition = -1;
         goalBackwardPosition = -1;
@@ -127,7 +122,7 @@ public class DriveTrain {
         telemetry.update();
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//     MOVE
+    //MOVE
     public void setMotorPower(double x, double y, double z){
         /*
         Guide to motor Powers:

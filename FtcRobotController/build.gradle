@@ -27,7 +27,7 @@ repositories {
 
 repositories {
     flatDir {
-        dirs 'C:\\Users\\pston\\GMR\\GMR2016-2017\\RelicRecovery\\navx-micro\\navx-micro\\android\\libs'
+        dirs 'RelicRecovery\\navx-micro\\navx-micro\\android\\libs'
     }
 }
 
