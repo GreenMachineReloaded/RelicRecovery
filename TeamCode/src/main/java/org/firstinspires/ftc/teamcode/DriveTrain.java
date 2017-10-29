@@ -188,7 +188,7 @@ public class DriveTrain {
         }
     }
 
-    public void Drive(Direction direction, double power){
+    public void drive(Direction direction, double power){
         switch (direction) {
             case N:
                 this.leftFront.setPower(-power);
@@ -329,7 +329,7 @@ public class DriveTrain {
 
                 case N:
                     if ((combinedEnValue) < goalEncoderPosition) {
-                        Drive(direction, power);
+                        drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
                     } else {
                         encodersCanRun = true;
@@ -341,7 +341,7 @@ public class DriveTrain {
                     break;
                 case S:
                     if ((combinedEnValue) > goalBackwardPosition) {
-                        Drive(direction, power);
+                        drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
                     } else {
                         encodersCanRun = true;
@@ -353,7 +353,7 @@ public class DriveTrain {
                     break;
                 case W:
                     if ((leftStrafeValue) < goalLeftStrafePosition) {
-                        Drive(direction, power);
+                        drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
                         telemetry.addData("Goal Value", goalLeftStrafePosition);
                     } else {
@@ -366,7 +366,7 @@ public class DriveTrain {
                     break;
                 case E:
                     if ((rightStrafeValue) < goalRightStrafePosition) {
-                        Drive(direction, power);
+                        drive(direction, power);
                         telemetry.addData("Current Combined Value", rightStrafeValue);
                         telemetry.addData("Current Goal Value", goalRightStrafePosition);
                         telemetry.addData("Current Comparison Value", goalEncoderPosition);
@@ -380,7 +380,7 @@ public class DriveTrain {
                     break;
                 case NE:
                     if (getLeftEncoder() < goalLeftPosition) {
-                        Drive(direction, power);
+                        drive(direction, power);
                         if (getYaw() < currentGyro) {
                             rightFront.setPower(-power);
                         } else {
@@ -400,7 +400,7 @@ public class DriveTrain {
                     break;
                 case NW:
                     if (getRightEncoder() < goalRightPosition) {
-                        Drive(direction, power);
+                        drive(direction, power);
                         if (getYaw() < currentGyro) {
                             leftFront.setPower(-power);
                         } else {
@@ -422,7 +422,7 @@ public class DriveTrain {
                     break;
                 case TURNRIGHT:
                     if (getLeftEncoder() < goalLeftPosition) {
-                        Drive(direction, power);
+                        drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
                         telemetry.addData("Goal Value", goalEncoderPosition);
                     } else {
@@ -450,7 +450,7 @@ public class DriveTrain {
                     }
                 }
                 if (!(this.getYaw() > (goalDegrees - gyroRange) && this.getYaw() < (goalDegrees + gyroRange))) {
-                    Drive(direction, power);
+                    drive(direction, power);
                     telemetry.addData("Goal Degrees", goalDegrees);
                     telemetry.addData("Current Degrees", getYaw());
                     return false;
@@ -467,7 +467,7 @@ public class DriveTrain {
                     }
                 }
                 if (!(this.getYaw() > (goalDegrees - gyroRange) && this.getYaw() < (goalDegrees + gyroRange))) {
-                    Drive(direction, power);
+                    drive(direction, power);
                     telemetry.addData("Goal Degrees", goalDegrees);
                     telemetry.addData("Current Degrees", getYaw());
                     return false;
@@ -550,9 +550,9 @@ public class DriveTrain {
     public boolean straighten(double goal) {
         if (this.getYaw() > (goal - 1) && this.getYaw() < (goal + 1)) {
             if (this.getYaw() > (goal - 1)) {
-                Drive(Direction.TURNLEFT, 0.2);
+                drive(Direction.TURNLEFT, 0.2);
             } else if (this.getYaw() < (goal + 1)) {
-                Drive(Direction.TURNRIGHT, 0.2);
+                drive(Direction.TURNRIGHT, 0.2);
             }
             return false;
         } else {
