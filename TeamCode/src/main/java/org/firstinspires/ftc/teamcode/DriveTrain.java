@@ -117,7 +117,7 @@ public class DriveTrain {
         this.rightRear.setPower(Range.clip((y+x-z), -1, 1));
     }
 
-    //A zoned drive that works different from the normal TeleOp Drive
+    //A zoned drive that makes it easier to move in the sixteen different directions listed, using the joystick
     public void zonedDrive(int zone, double x, double y, double z) {
         power = Math.sqrt((x*x) + (y*y));
         switch(zone) {
