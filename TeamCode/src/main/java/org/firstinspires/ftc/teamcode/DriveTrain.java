@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,42 +18,34 @@ public class DriveTrain {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // MOVE V
     //objects for all the drive train motors
-    //objects for controlling the front two motors
     private DcMotor leftFront;
-    //object for controlling the left front motor
     private DcMotor rightFront;
-    //object for controlling the right front motor
-
-    //objects for controlling the rear two motors
     private DcMotor leftRear;
-    //object for controlling the left rear motor
     private DcMotor rightRear;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GYRO V
     private AHRS gyro;
     private AHRS.DimStateTracker gyroReset;
-    //gyro sensor
 
-    //variables for gyro sensor
     private float goalDegrees;
     private int goalPosition;
     private int gyroRange;
-    private static final double     countsPerMotorRev    = 1440 ;
-    private static final double     driveGearReduction    = 1.5 ;
-    private static final double     wheelDiameterInches   = 4.0 ;
-    private static final double     countsPerInch         = (countsPerMotorRev * driveGearReduction) / (wheelDiameterInches * Math.PI);
+    private static final double countsPerMotorRev = 1440;
+    private static final double driveGearReduction = 1.5;
+    private static final double wheelDiameterInches = 4.0;
+    private static final double countsPerInch = (countsPerMotorRev * driveGearReduction) / (wheelDiameterInches * Math.PI);
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// SETUP V
+// SETUP
     private String LeftFront = "leftfront";
     private String RightFront = "rightfront";
     private String LeftRear = "leftrear";
     private String RightRear = "rightrear";
     private final int gyroPort = 3;
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// MISS V
-    private Telemetry telemetry;        //do we need this?
-    //object for reference (telemetry)
+// MISC
+    private Telemetry telemetry;
+
     private boolean encodersCanRun;
     private double goalEncoderPosition;
     private double goalBackwardPosition;
@@ -63,8 +53,6 @@ public class DriveTrain {
     private double goalRightPosition;
     private double goalRightStrafePosition;
     private double goalLeftStrafePosition;
-
-    private double testLiftPosition = 1;
 
     private double currentGyro;
 
@@ -76,16 +64,10 @@ public class DriveTrain {
         telemetry.addData("DriveTrain Startup", "Beginning");
         telemetry.update();
         //setup for all the motors.
-        //setup for all the front motors.
         this.leftFront = leftFront;
-        //setup for the left front motor.
         this.rightFront = rightFront;
-        //setup for the right front motor.
-        //setup for all the back motors.
         this.leftRear = leftRear;
-        //setup for the left back motor.
         this.rightRear = rightRear;
-        //setup for the right back motor.
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -116,6 +98,7 @@ public class DriveTrain {
 
         this.telemetry = telemetry;
         this.encodersCanRun = true;
+        //Sets the position to a neutral position so it doesn't interfere with a program using this value
         this.goalEncoderPosition = -1;
         goalBackwardPosition = -1;
         telemetry.addData("DriveTrain Startup", "End");
@@ -137,121 +120,122 @@ public class DriveTrain {
         this.rightRear.setPower(Range.clip((y+x-z), -1, 1));
     }
 
+    //A zoned drive that works different from the normal TeleOp Drive
     public void zonedDrive(int zone, double x, double y, double z) {
         power = Math.sqrt((x*x) + (y*y));
         switch(zone) {
             case 0:
                 setMotorPower(power, 0, z);
-                telemetry.addData("Current Movement", Direction.STRAFERIGHT);
+                telemetry.addData("Current Movement", Direction.E);
                 break;
             case 1:
                 setMotorPower(power, (power*.41), z);
-                telemetry.addData("Current Movement", Direction.DSTRAFERIGHTUP);
+                telemetry.addData("Current Movement", Direction.ENE);
                 break;
             case 2:
                 setMotorPower(power, power, z);
-                telemetry.addData("Current Movement", Direction.DRIGHTUP);
+                telemetry.addData("Current Movement", Direction.NE);
                 break;
             case 3:
                 setMotorPower((power*.41), power, z);
-                telemetry.addData("Current Movement", Direction.DUPSTRAFERIGHT);
+                telemetry.addData("Current Movement", Direction.NNE);
                 break;
             case 4:
                 setMotorPower(0, power, z);
-                telemetry.addData("Current Movement", Direction.FORWARD);
+                telemetry.addData("Current Movement", Direction.N);
                 break;
             case 5:
                 setMotorPower(-(power*.41), power, z);
-                telemetry.addData("Current Movement", Direction.DUPSTRAFELEFT);
+                telemetry.addData("Current Movement", Direction.NNW);
                 break;
             case 6:
                 setMotorPower(-power, power, z);
-                telemetry.addData("Current Movement", Direction.DLEFTUP);
+                telemetry.addData("Current Movement", Direction.NW);
                 break;
             case 7:
                 setMotorPower(-power, (power*.41), z);
-                telemetry.addData("Current Movement", Direction.DSTRAFELEFTUP);
+                telemetry.addData("Current Movement", Direction.WNW);
                 break;
             case 8:
                 setMotorPower(-power, 0, z);
-                telemetry.addData("Current Movement", Direction.STRAFELEFT);
+                telemetry.addData("Current Movement", Direction.W);
                 break;
             case 9:
                 setMotorPower(-power, -(power*.41), z);
-                telemetry.addData("Current Movement", Direction.DSTRAFELEFTDOWN);
+                telemetry.addData("Current Movement", Direction.WSW);
                 break;
             case 10:
                 setMotorPower(-power, -power, z);
-                telemetry.addData("Current Movement", Direction.DLEFTDOWN);
+                telemetry.addData("Current Movement", Direction.SW);
                 break;
             case 11:
                 setMotorPower(-(power*.41), -power, z);
-                telemetry.addData("Current Movement", Direction.DDOWNSTRAFELEFT);
+                telemetry.addData("Current Movement", Direction.SSW);
                 break;
             case 12:
                 setMotorPower(0, -power, z);
-                telemetry.addData("Current Movement", Direction.BACKWARD);
+                telemetry.addData("Current Movement", Direction.S);
                 break;
             case 13:
                 setMotorPower((power*.41), -power, z);
-                telemetry.addData("Current Movement", Direction.DDOWNSTRAFERIGHT);
+                telemetry.addData("Current Movement", Direction.SSE);
                 break;
             case 14:
                 setMotorPower(power, -power, z);
-                telemetry.addData("Current Movement", Direction.DRIGHTDOWN);
+                telemetry.addData("Current Movement", Direction.SE);
                 break;
             case 15:
                 setMotorPower(power, -(power*.41), z);
-                telemetry.addData("Current Movement", Direction.DSTRAFERIGHTDOWN);
+                telemetry.addData("Current Movement", Direction.ESE);
                 break;
         }
     }
 
     public void Drive(Direction direction, double power){
         switch (direction) {
-            case FORWARD:
+            case N:
                 this.leftFront.setPower(-power);
                 this.rightFront.setPower(power);
                 this.leftRear.setPower(-power);
                 this.rightRear.setPower(power);
                 break;
-            case BACKWARD:
+            case S:
                 this.leftFront.setPower(power);
                 this.rightFront.setPower(-power);
                 this.leftRear.setPower(power);
                 this.rightRear.setPower(-power);
                 break;
-            case STRAFELEFT:
+            case W:
                 this.leftFront.setPower(power);
                 this.rightFront.setPower(power);
                 this.leftRear.setPower(-power);
                 this.rightRear.setPower(-power);
                 break;
-            case STRAFERIGHT:
+            case E:
                 this.leftFront.setPower(-power);
                 this.rightFront.setPower(-power);
                 this.leftRear.setPower(power);
                 this.rightRear.setPower(power);
                 break;
-            case DLEFTUP:
+            case NW:
                 this.leftFront.setPower(0);
                 this.rightFront.setPower(power);
                 this.leftRear.setPower(-power);
                 this.rightRear.setPower(0);
                 break;
-            case DLEFTDOWN:
+            case SW:
                 this.leftFront.setPower(0);
                 this.rightFront.setPower(-power);
                 this.leftRear.setPower(power);
                 this.rightRear.setPower(0);
                 break;
-            case DRIGHTUP:
+            case NE:
                 this.leftFront.setPower(-power);
                 this.rightFront.setPower(0);
                 this.leftRear.setPower(0);
                 this.rightRear.setPower(power);
                 break;
-            case DRIGHTDOWN:
+            case SE:
                 this.leftFront.setPower(power);
                 this.rightFront.setPower(0);
                 this.leftRear.setPower(0);
@@ -269,92 +253,64 @@ public class DriveTrain {
                 this.leftRear.setPower(-power);
                 this.rightRear.setPower(-power);
                 break;
-
-            //Possible movement code, not yet tested
-
-            case DSTRAFERIGHTUP:
+            case ENE:
                 this.leftFront.setPower(-power);
                 this.rightFront.setPower(-power/2);
                 this.leftRear.setPower(power/2);
                 this.rightRear.setPower(power);
                 break;
-            case DUPSTRAFERIGHT:
+            case NNE:
                 this.leftFront.setPower(-power);
                 this.rightFront.setPower(power/2);
                 this.leftRear.setPower(-power/2);
                 this.rightRear.setPower(power);
                 break;
-            case DUPSTRAFELEFT:
+            case NNW:
                 this.leftFront.setPower(-power/2);
                 this.rightFront.setPower(power);
                 this.leftRear.setPower(-power);
                 this.rightRear.setPower(power/2);
                 break;
-            case DSTRAFELEFTUP:
+            case WNW:
                 this.leftFront.setPower(power/2);
                 this.rightFront.setPower(power);
                 this.leftRear.setPower(-power);
                 this.rightRear.setPower(-power/2);
                 break;
-            case DSTRAFELEFTDOWN:
+            case WSW:
                 this.leftFront.setPower(power);
                 this.rightFront.setPower(power/2);
                 this.leftRear.setPower(-power/2);
                 this.rightRear.setPower(-power);
                 break;
-            case DDOWNSTRAFELEFT:
+            case SSW:
                 this.leftFront.setPower(power/2);
                 this.rightFront.setPower(-power);
                 this.leftRear.setPower(power);
                 this.rightRear.setPower(-power/2);
                 break;
-            case DDOWNSTRAFERIGHT:
+            case SSE:
                 this.leftFront.setPower(power);
                 this.rightFront.setPower(-power/2);
                 this.leftRear.setPower(power/2);
                 this.rightRear.setPower(-power);
                 break;
-            case DSTRAFERIGHTDOWN:
+            case ESE:
                 this.leftFront.setPower(-power/2);
                 this.rightFront.setPower(-power);
                 this.leftRear.setPower(power);
                 this.rightRear.setPower(power/2);
                 break;
-
-//            case DSTRAFERIGHTUP:
-//                this.leftFront.setPower(-power);
-//                this.rightFront.setPower(-power/2);
-//                this.leftRear.setPower(power/2);
-//                this.rightRear.setPower(power);
-//                break;
-//            case DUPSTRAFERIGHT:
-//                this.leftFront.setPower(-power);
-//                this.rightFront.setPower(power/2);
-//                this.leftRear.setPower(-power/2);
-//                this.rightRear.setPower(power);
-//                break;
-//            case DUPSTRAFELEFT:
-//                this.leftFront.setPower(-power/2);
-//                this.rightFront.setPower(power);
-//                this.leftRear.setPower(-power);
-//                this.rightRear.setPower(power/2);
-//                break;
-//            case DSTRAFELEFTUP:
-//                this.leftFront.setPower(power/2);
-//                this.rightFront.setPower(power);
-//                this.leftRear.setPower(-power);
-//                this.rightRear.setPower(-power/2);
-//                break;
-//            case DSTRAFELEFTDOWN:
-
         }
     }
-    public void stop(){
+
+    public void stop() {
         this.leftFront.setPower(0);
         this.leftRear.setPower(0);
         this.rightFront.setPower(0);
         this.rightRear.setPower(0);
     }
+
     public boolean encoderDrive(Direction direction, double power, double inches) {
 
         int combinedEnValue = ((getLeftEncoder() + getRightEncoder()) / 2);
@@ -374,41 +330,44 @@ public class DriveTrain {
         } else {
             switch (direction) {
 
-                case FORWARD:
+                case N:
                     if ((combinedEnValue) < goalEncoderPosition) {
                         Drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
                     } else {
                         encodersCanRun = true;
+                        //resets the encoders to a neutral value
                         goalEncoderPosition = -1;
                         stop();
                         return encodersCanRun;
                     }
                     break;
-                case BACKWARD:
+                case S:
                     if ((combinedEnValue) > goalBackwardPosition) {
                         Drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
                     } else {
                         encodersCanRun = true;
+                        //resets the encoders to a neutral value
                         goalEncoderPosition = -1;
                         stop();
                         return encodersCanRun;
                     }
                     break;
-                case STRAFELEFT:
+                case W:
                     if ((leftStrafeValue) < goalLeftStrafePosition) {
                         Drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
                         telemetry.addData("Goal Value", goalLeftStrafePosition);
                     } else {
                         encodersCanRun = true;
+                        //resets the encoders to a neutral value
                         goalEncoderPosition = -1;
                         stop();
                         return encodersCanRun;
                     }
                     break;
-                case STRAFERIGHT:
+                case E:
                     if ((rightStrafeValue) < goalRightStrafePosition) {
                         Drive(direction, power);
                         telemetry.addData("Current Combined Value", rightStrafeValue);
@@ -416,12 +375,13 @@ public class DriveTrain {
                         telemetry.addData("Current Comparison Value", goalEncoderPosition);
                     } else {
                         encodersCanRun = true;
+                        //resets the encoders to a neutral value
                         goalEncoderPosition = -1;
                         stop();
                         return encodersCanRun;
                     }
                     break;
-                case DRIGHTUP:
+                case NE:
                     if (getLeftEncoder() < goalLeftPosition) {
                         Drive(direction, power);
                         if (getYaw() < currentGyro) {
@@ -433,14 +393,15 @@ public class DriveTrain {
                         telemetry.addData("Current Yaw", getYaw());
                     } else {
                         encodersCanRun = true;
+                        //resets the encoders to a neutral value
                         goalEncoderPosition = -1;
                         stop();
                         return encodersCanRun;
                     }
                     break;
-                case DRIGHTDOWN:
+                case SE:
                     break;
-                case DLEFTUP:
+                case NW:
                     if (getRightEncoder() < goalRightPosition) {
                         Drive(direction, power);
                         if (getYaw() < currentGyro) {
@@ -452,12 +413,13 @@ public class DriveTrain {
                         telemetry.addData("Current Yaw", getYaw());
                     } else {
                         encodersCanRun = true;
+                        //resets the encoders to a neutral value
                         goalEncoderPosition = -1;
                         stop();
                         return encodersCanRun;
                     }
                     break;
-                case DLEFTDOWN:
+                case SW:
                     break;
                 case TURNLEFT:
                     break;
@@ -468,6 +430,7 @@ public class DriveTrain {
                         telemetry.addData("Goal Value", goalEncoderPosition);
                     } else {
                         encodersCanRun = true;
+                        //resets the encoders to a neutral value
                         goalEncoderPosition = -1;
                         stop();
                         return encodersCanRun;
@@ -528,6 +491,7 @@ public class DriveTrain {
         }
     }
 
+    //Experiment with using a field oriented drive instead of a robot oriented drive
     public void experimentalDrive(double x, double y, double z){
         /*
         Guide to motor Powers:
@@ -536,32 +500,26 @@ public class DriveTrain {
         Left Rear: y + x - z
         Right Rear: - (y - x + z)
          */
-//        double LFpower = Range.clip(-(y+x+z),-1,1);
-//        double RFpower = Range.clip((y-x-z),-1,1);
-//        double LRpower = Range.clip(-(y-x+z),-1,1);
-//        double RRpower = Range.clip((y+x-z), -1, 1);
 
-        double forwrd = x; /* Invert stick X axis */
+        double forward = x; //Invert stick X axis
         double strafe = y;
 
         double pi = Math.PI;
 
-/* Adjust Joystick X/Y inputs by navX MXP yaw angle */
+        /* Adjust Joystick X/Y inputs by navX MXP yaw angle */
 
         double gyro_radians = getYaw() * pi/180;
-        double temp = forwrd * cos(gyro_radians) +
-                strafe * sin(gyro_radians);
-        strafe = -forwrd * sin(gyro_radians) +
-                strafe * cos(gyro_radians);
-        forwrd = temp;
+        double temp = forward * cos(gyro_radians) + strafe * sin(gyro_radians);
+        strafe = -forward * sin(gyro_radians) + strafe * cos(gyro_radians);
+        forward = temp;
 
-/* At this point, Joystick X/Y (strafe/forwrd) vectors have been */
-/* rotated by the gyro angle, and can be sent to drive system */
+        /* At this point, Joystick X/Y (strafe/forward) vectors have been */
+        /* rotated by the gyro angle, and can be sent to drive system */
 
-        this.leftFront.setPower(Range.clip(-(forwrd+strafe+z),-1,1));
-        this.rightFront.setPower(Range.clip((forwrd-strafe-z),-1,1));
-        this.leftRear.setPower(Range.clip(-(forwrd-strafe+z),-1,1));
-        this.rightRear.setPower(Range.clip((forwrd+strafe-z), -1, 1));
+        this.leftFront.setPower(Range.clip(-(forward+strafe+z),-1,1));
+        this.rightFront.setPower(Range.clip((forward-strafe-z),-1,1));
+        this.leftRear.setPower(Range.clip(-(forward-strafe+z),-1,1));
+        this.rightRear.setPower(Range.clip((forward+strafe-z), -1, 1));
     }
 
     public double currentDegrees(double x,double y) {
@@ -573,12 +531,13 @@ public class DriveTrain {
     }
 
     public double currentZone(double x,double y) {
-        if (((int) (Math.round(currentDegrees(x, y) / 22.5))) <= 15) {
-            return (int) (Math.round(currentDegrees(x, y) / 22.5));
+        if (((int)(Math.round(currentDegrees(x, y) / 22.5))) <= 15) {
+            return (int)(Math.round(currentDegrees(x, y) / 22.5));
         } else {
             return 0;
         }
     }
+
     public void resetEncoders() {
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -590,6 +549,7 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
     public boolean straighten(double goal) {
         if (this.getYaw() > (goal - 1) && this.getYaw() < (goal + 1)) {
             if (this.getYaw() > (goal - 1)) {
@@ -603,44 +563,34 @@ public class DriveTrain {
         }
     }
 
-    public boolean checkGyro() {
-        return gyro.isCalibrating();
-    }
-    public double clipRange(double number, double min, double max) {
-        if (number < min) {return min;}
-        else if (number > max) {return max;}
-        else {return number;}
-    }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  ENCODER
+
+    //  ENCODER
     public int getLeftEncoder() {return -this.leftFront.getCurrentPosition();}
     public int getRightEncoder() {return this.rightFront.getCurrentPosition();}
-    //    countsPerMotorRev    = 1440 ;
-//    driveGearReduction    = 1.5 ;
-//    wheelDiameterInches   = 4.0 ;
     public double encoderInchesRight() {return (this.getRightEncoder() / (1440 * 1.5) / (4 * Math.PI));}
     public double encoderInchesLeft() {return (this.getLeftEncoder() / (1440 * 1.5) / (4 * Math.PI));}
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  ENUMS
     public enum Direction{
-        FORWARD,
-        BACKWARD,
-        STRAFELEFT,
-        STRAFERIGHT,
-        DRIGHTUP,
-        DRIGHTDOWN,
-        DLEFTUP,
-        DLEFTDOWN,
+        N,
+        S,
+        W,
+        E,
+        NE,
+        SE,
+        NW,
+        SW,
         TURNLEFT,
         TURNRIGHT,
-        DSTRAFERIGHTUP,
-        DUPSTRAFERIGHT,
-        DUPSTRAFELEFT,
-        DSTRAFELEFTUP,
-        DSTRAFELEFTDOWN,
-        DDOWNSTRAFELEFT,
-        DDOWNSTRAFERIGHT,
-        DSTRAFERIGHTDOWN
+        ENE,
+        NNE,
+        NNW,
+        WNW,
+        WSW,
+        SSW,
+        SSE,
+        ESE
     }
 
 }
