@@ -37,13 +37,6 @@ public class DriveTrain {
     private static final double countsPerInch = (countsPerMotorRev * driveGearReduction) / (wheelDiameterInches * Math.PI);
     //////////////////////////////////// SETUP
 
-    private String LeftFront = "leftfront";
-    private String RightFront = "rightfront";
-    private String LeftRear = "leftrear";
-    private String RightRear = "rightrear";
-    private final int gyroPort = 3;
-    //////////////////////////////////// MISC
-
     private Telemetry telemetry;
 
     private boolean encodersCanRun;
@@ -53,6 +46,8 @@ public class DriveTrain {
     private double goalRightPosition;
     private double goalRightStrafePosition;
     private double goalLeftStrafePosition;
+
+    private double startEncoderValue;
 
     private double currentGyro;
 
@@ -98,8 +93,10 @@ public class DriveTrain {
 
         this.telemetry = telemetry;
         this.encodersCanRun = true;
-        //Sets the position to a neutral position so it doesn't interfere with a program using this value
-        this.goalEncoderPosition = -1;
+        //Starts the goal for the encoders at a neutral value, so no leftover values mess with the program
+        this.startEncoderValue = -1;
+
+        this.goalEncoderPosition = startEncoderValue;
         goalBackwardPosition = -1;
         telemetry.addData("DriveTrain Startup", "End");
         telemetry.update();
@@ -337,7 +334,7 @@ public class DriveTrain {
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
-                        goalEncoderPosition = -1;
+                        goalEncoderPosition = startEncoderValue;
                         stop();
                         return encodersCanRun;
                     }
@@ -349,7 +346,7 @@ public class DriveTrain {
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
-                        goalEncoderPosition = -1;
+                        goalEncoderPosition = startEncoderValue;
                         stop();
                         return encodersCanRun;
                     }
@@ -362,7 +359,7 @@ public class DriveTrain {
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
-                        goalEncoderPosition = -1;
+                        goalEncoderPosition = startEncoderValue;
                         stop();
                         return encodersCanRun;
                     }
@@ -376,7 +373,7 @@ public class DriveTrain {
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
-                        goalEncoderPosition = -1;
+                        goalEncoderPosition = startEncoderValue;
                         stop();
                         return encodersCanRun;
                     }
@@ -394,7 +391,7 @@ public class DriveTrain {
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
-                        goalEncoderPosition = -1;
+                        goalEncoderPosition = startEncoderValue;
                         stop();
                         return encodersCanRun;
                     }
@@ -414,7 +411,7 @@ public class DriveTrain {
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
-                        goalEncoderPosition = -1;
+                        goalEncoderPosition = startEncoderValue;
                         stop();
                         return encodersCanRun;
                     }
@@ -431,7 +428,7 @@ public class DriveTrain {
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
-                        goalEncoderPosition = -1;
+                        goalEncoderPosition = startEncoderValue;
                         stop();
                         return encodersCanRun;
                     }
@@ -570,7 +567,7 @@ public class DriveTrain {
     public double encoderInchesRight() {return (this.getRightEncoder() / (1440 * 1.5) / (4 * Math.PI));}
     public double encoderInchesLeft() {return (this.getLeftEncoder() / (1440 * 1.5) / (4 * Math.PI));}
     //////////////////////////////////// ENUMS
-    
+
     public enum Direction{
         N,
         S,
