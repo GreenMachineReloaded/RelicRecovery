@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.kauailabs.navx.ftc.AHRS;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gyroscope;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -25,8 +31,7 @@ public class DriveTrain {
 
     //////////////////////////////////// GYRO
 
-    private AHRS gyro;
-    private AHRS.DimStateTracker gyroReset;
+    private IntegratingGyroscope gyro;
 
     private float goalDegrees;
     private int goalPosition;
@@ -55,7 +60,7 @@ public class DriveTrain {
     //////////////////////////////////// CONSTRUCT
 
     //calls the second constructor of DriveTrain and passes a reference to the hardware map, telemetry, the 4 string names of the motors in the order left front, right front, left back, right back and the port reference to the gyro.
-    public DriveTrain(DcMotor leftFront, DcMotor rightFront, DcMotor leftRear, DcMotor rightRear, AHRS gyro, Telemetry telemetry) {
+    public DriveTrain(DcMotor leftFront, DcMotor rightFront, DcMotor leftRear, DcMotor rightRear, IntegratingGyroscope gyro, Telemetry telemetry) {
         telemetry.addData("DriveTrain Startup", "Beginning");
         telemetry.update();
         //setup for all the motors.
@@ -78,12 +83,6 @@ public class DriveTrain {
         //gyro sensor setup.
         //this.gyro = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"), gyroPort, AHRS.DeviceDataType.kProcessedData);
         this.gyro = gyro;
-        //sets up the gyro sensor.
-        this.gyro.zeroYaw();
-        gyroReset = gyro.getDimStateTrackerInstance();
-
-        //sets the gyro sensors position to zero.
-        gyroReset.reset();
 
         //misc setup
 
@@ -444,12 +443,12 @@ public class DriveTrain {
         switch(direction) {
             case TURNLEFT:
                 if (goalDegrees == -1) {
-                    goalDegrees = (this.getYaw() - degrees);
-                    if (goalDegrees < 0) {
-                        goalDegrees = (goalDegrees + 360);
+                    goalDegrees = (this.getYaw() + degrees);
+                    if (goalDegrees > 360) {
+                        goalDegrees = (goalDegrees - 360);
                     }
                 }
-                if (!(this.getYaw() > (goalDegrees - gyroRange) && this.getYaw() < (goalDegrees + gyroRange))) {
+                if (!(this.getYaw() > (goalDegrees + gyroRange) && this.getYaw() > (goalDegrees - gyroRange))) {
                     Drive(direction, power);
                     telemetry.addData("Goal Degrees", goalDegrees);
                     telemetry.addData("Current Degrees", getYaw());
@@ -461,12 +460,12 @@ public class DriveTrain {
                 }
             case TURNRIGHT:
                 if (goalDegrees == -1) {
-                    goalDegrees = (this.getYaw() + degrees);
-                    if (goalDegrees > 360) {
-                        goalDegrees = (goalDegrees - 360);
+                    goalDegrees = (this.getYaw() - degrees);
+                    if (goalDegrees < 0) {
+                        goalDegrees = (goalDegrees + 360);
                     }
                 }
-                if (!(this.getYaw() > (goalDegrees - gyroRange) && this.getYaw() < (goalDegrees + gyroRange))) {
+                if (!(this.getYaw() < (goalDegrees + gyroRange) && this.getYaw() > (goalDegrees - gyroRange))) {
                     Drive(direction, power);
                     telemetry.addData("Goal Degrees", goalDegrees);
                     telemetry.addData("Current Degrees", getYaw());
@@ -481,10 +480,11 @@ public class DriveTrain {
     }
 
     public float getYaw(){
-        if(this.gyro.getYaw() < 0) {
-            return (360 + this.gyro.getYaw());
+        Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        if(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle) < 0) {
+            return (360 + AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
         } else {
-            return this.gyro.getYaw();
+            return AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
         }
     }
 
@@ -558,6 +558,13 @@ public class DriveTrain {
         } else {
             return true;
         }
+    }
+
+    public void displayEncoders() {
+        telemetry.addData("Right Front Encoder: ", rightFront.getCurrentPosition());
+        telemetry.addData("Left Front Encoder: ", leftFront.getCurrentPosition());
+        telemetry.addData("Right Rear Encoder: ", rightRear.getCurrentPosition());
+        telemetry.addData("Left Rear Encoder: ", leftRear.getCurrentPosition());
     }
 
     //////////////////////////////////// ENCODER
