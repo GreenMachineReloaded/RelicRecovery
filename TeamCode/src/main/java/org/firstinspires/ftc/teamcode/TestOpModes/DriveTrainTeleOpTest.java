@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
-import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.DriveTrain;
 
 /**
@@ -32,7 +30,7 @@ public class DriveTrainTeleOpTest extends OpMode {
 
     private boolean isFinished;
 
-    NavxMicroNavigationSensor gyroScope;
+    NavxMicroNavigationSensor gyroReference;
     IntegratingGyroscope gyro;
 
     @Override
@@ -48,8 +46,8 @@ public class DriveTrainTeleOpTest extends OpMode {
         power = 0.1;
         finches = 5;
 
-        gyroScope = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
-        gyro = (IntegratingGyroscope)gyroScope;
+        gyroReference = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
+        gyro = gyroReference;
 
         driveTrain = new DriveTrain(leftFront, rightFront, leftRear, rightRear, gyro,  telemetry);
 
@@ -60,6 +58,7 @@ public class DriveTrainTeleOpTest extends OpMode {
     public void loop() {
 
 
+            /*
             if (gamepad1.dpad_down){
                 isFinished = driveTrain.encoderDrive(DriveTrain.Direction.S, power, finches);
             }
@@ -74,10 +73,11 @@ public class DriveTrainTeleOpTest extends OpMode {
             } else if (gamepad1.a) {
                 isFinished = driveTrain.gyroTurn(DriveTrain.Direction.TURNRIGHT, power, 90);
             }
+            */
 
             if (isFinished) {
                 x = gamepad1.left_stick_x;
-                y = gamepad1.left_stick_y;
+                y = -gamepad1.left_stick_y;
                 z = gamepad1.right_stick_x;
 
                 driveTrain.setMotorPower(x, y, z);
