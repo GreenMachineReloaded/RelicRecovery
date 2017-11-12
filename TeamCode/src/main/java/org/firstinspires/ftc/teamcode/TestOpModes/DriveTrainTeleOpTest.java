@@ -35,9 +35,7 @@ public class DriveTrainTeleOpTest extends OpMode {
 
     @Override
     public void init() {
-
-
-
+        
         leftFront = hardwareMap.dcMotor.get("leftfront");
         rightFront = hardwareMap.dcMotor.get("rightfront");
         leftRear = hardwareMap.dcMotor.get("leftrear");
@@ -56,24 +54,6 @@ public class DriveTrainTeleOpTest extends OpMode {
 
     @Override
     public void loop() {
-
-
-            /*
-            if (gamepad1.dpad_down){
-                isFinished = driveTrain.encoderDrive(DriveTrain.Direction.S, power, finches);
-            }
-            else if(gamepad1.dpad_right){
-                isFinished = driveTrain.encoderDrive(DriveTrain.Direction.E, power, finches);
-            }
-            else if (gamepad1.dpad_up){
-                isFinished = driveTrain.encoderDrive(DriveTrain.Direction.N, power, finches);
-            }
-            else if (gamepad1.dpad_left) {
-                isFinished = driveTrain.encoderDrive(DriveTrain.Direction.W, power, finches);
-            } else if (gamepad1.a) {
-                isFinished = driveTrain.gyroTurn(DriveTrain.Direction.TURNRIGHT, power, 90);
-            }
-            */
 
             if (isFinished) {
                 x = gamepad1.left_stick_x;
