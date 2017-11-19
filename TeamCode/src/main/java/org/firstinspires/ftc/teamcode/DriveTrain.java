@@ -57,6 +57,10 @@ public class DriveTrain {
     private double currentGyro;
 
     private double power;
+
+    private double degreesSetup;
+    private int zonedDegrees;
+    private float yaw;
     //////////////////////////////////// CONSTRUCT
 
     //calls the second constructor of DriveTrain and passes a reference to the hardware map, telemetry, the 4 string names of the motors in the order left front, right front, left back, right back and the port reference to the gyro.
@@ -80,8 +84,7 @@ public class DriveTrain {
         this.leftRear.setPower(0);
         this.rightRear.setPower(0);
 
-        //gyro sensor setup.
-        //this.gyro = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"), gyroPort, AHRS.DeviceDataType.kProcessedData);
+
         this.gyro = gyro;
 
         //misc setup
@@ -327,10 +330,10 @@ public class DriveTrain {
             switch (direction) {
 
                 case N:
-                    if ((combinedEnValue) < goalEncoderPosition) {
+
+                    if (combinedEnValue < goalEncoderPosition) {
                         drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
-                        telemetry.addData("Drive direction:", direction);
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
@@ -340,10 +343,10 @@ public class DriveTrain {
                     }
                     break;
                 case S:
-                    if ((combinedEnValue) > goalBackwardPosition) {
+
+                    if (combinedEnValue > goalBackwardPosition) {
                         drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
-                        telemetry.addData("Drive direction:", direction);
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
@@ -353,7 +356,8 @@ public class DriveTrain {
                     }
                     break;
                 case W:
-                    if ((leftStrafeValue) < goalLeftStrafePosition) {
+
+                    if (leftStrafeValue < goalLeftStrafePosition) {
                         drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
                         telemetry.addData("Goal Value", goalLeftStrafePosition);
@@ -366,7 +370,8 @@ public class DriveTrain {
                     }
                     break;
                 case E:
-                    if ((rightStrafeValue) < goalRightStrafePosition) {
+
+                    if (rightStrafeValue < goalRightStrafePosition) {
                         drive(direction, power);
                         telemetry.addData("Current Combined Value", rightStrafeValue);
                         telemetry.addData("Current Goal Value", goalRightStrafePosition);
@@ -532,16 +537,19 @@ public class DriveTrain {
     }
 
     public double currentDegrees(double x, double y) {
-        if (((Math.atan2(y, x)) * (180/Math.PI))<0) {
-            return (360 + ((Math.atan2(y, x)) * (180/Math.PI)));
+
+        degreesSetup = Math.atan2(y, x);
+        if ((degreesSetup * (180/Math.PI)) < 0) {
+            return (360 + degreesSetup * (180/Math.PI));
         } else {
-            return ((Math.atan2(y, x)) * (180/Math.PI));
+            return degreesSetup * (180/Math.PI);
         }
     }
 
     public double currentZone(double x, double y) {
-        if (((int)(Math.round(currentDegrees(x, y) / 22.5))) <= 15) {
-            return (int)(Math.round(currentDegrees(x, y) / 22.5));
+        zonedDegrees = ((int)(Math.round(currentDegrees(x, y) / 22.5)));
+        if (zonedDegrees <= 15) {
+            return zonedDegrees;
         } else {
             return 0;
         }
@@ -560,10 +568,11 @@ public class DriveTrain {
     }
 
     public boolean straighten(double goal) {
-        if (this.getYaw() > (goal - 1) && this.getYaw() < (goal + 1)) {
-            if (this.getYaw() > (goal - 1)) {
+        yaw = this.getYaw();
+        if (yaw > (goal - 1) && yaw < (goal + 1)) {
+            if (yaw > (goal - 1)) {
                 drive(Direction.TURNLEFT, 0.2);
-            } else if (this.getYaw() < (goal + 1)) {
+            } else if (yaw < (goal + 1)) {
                 drive(Direction.TURNRIGHT, 0.2);
             }
             return false;
