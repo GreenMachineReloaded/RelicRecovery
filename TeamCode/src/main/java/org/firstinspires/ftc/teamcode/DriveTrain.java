@@ -37,7 +37,7 @@ public class DriveTrain {
     private int goalPosition;
     private int gyroRange;
     private static final double countsPerMotorRev = 1440;
-    private static final double driveGearReduction = 1.5;
+    private static final double driveGearReduction = 2;
     private static final double wheelDiameterInches = 4.0;
     private static final double countsPerInch = (countsPerMotorRev * driveGearReduction) / (wheelDiameterInches * Math.PI);
     //////////////////////////////////// SETUP
@@ -330,6 +330,7 @@ public class DriveTrain {
                     if ((combinedEnValue) < goalEncoderPosition) {
                         drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
+                        telemetry.addData("Drive direction:", direction);
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
@@ -342,6 +343,7 @@ public class DriveTrain {
                     if ((combinedEnValue) > goalBackwardPosition) {
                         drive(direction, power);
                         telemetry.addData("Current Combined Value", combinedEnValue);
+                        telemetry.addData("Drive direction:", direction);
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
@@ -486,6 +488,15 @@ public class DriveTrain {
             return (360 + AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
         } else {
             return AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
+        }
+    }
+
+    public float getPitch(){
+        Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        if(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle) < 0){
+            return (360 + AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle));
+        } else {
+            return AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle);
         }
     }
 
