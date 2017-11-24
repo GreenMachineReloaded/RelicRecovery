@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode.Autonomous.Blue;
+package org.firstinspires.ftc.teamcode.Autonomous.Red;
 
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -12,24 +10,14 @@ import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.DriveTrain;
-
-import java.util.concurrent.TimeUnit;
-
-import static org.firstinspires.ftc.teamcode.Autonomous.Blue.States.END;
 
 /**
  * Created by FTC 4316 on 11/11/2017.
  */
-@Autonomous(name = "Auto B1", group = "Blue")
-public class Auto_B1 extends OpMode {
+@Autonomous(name = "Auto R1", group = "Red")
+public class Auto_R1 extends OpMode {
 
     private DriveTrain drive;
 
@@ -41,10 +29,11 @@ public class Auto_B1 extends OpMode {
     NavxMicroNavigationSensor gyroscope;
     IntegratingGyroscope gyro;
 
-    Servo leftArm;
     Servo rightArm;
-    ColorSensor colorSensorLeft;
-    DistanceSensor distanceSensorLeft;
+    Servo leftArm;
+
+    ColorSensor colorSensorRight;
+    DistanceSensor distanceSensorRight;
 
     //OpenGLMatrix lastLocation = null;
     //VuforiaLocalizer vuforia;
@@ -69,11 +58,11 @@ public class Auto_B1 extends OpMode {
         rightRear = hardwareMap.dcMotor.get("rightrear");
         leftRear = hardwareMap.dcMotor.get("leftrear");
 
-        leftArm = hardwareMap.get(Servo.class, "leftArm");
         rightArm = hardwareMap.get(Servo.class, "rightArm");
+        leftArm = hardwareMap.get(Servo.class, "leftArm");
 
-        colorSensorLeft = hardwareMap.get(ColorSensor.class, "colorDistanceLeft");
-        distanceSensorLeft = hardwareMap.get(DistanceSensor.class, "colorDistanceLeft");
+        colorSensorRight = hardwareMap.get(ColorSensor.class, "colorDistanceRight");
+        distanceSensorRight = hardwareMap.get(DistanceSensor.class, "colorDistanceRight");
 
         gyroscope = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
 
@@ -89,10 +78,10 @@ public class Auto_B1 extends OpMode {
 
         drive = new DriveTrain(leftFront, rightFront, leftRear, rightRear, gyroscope, telemetry);
 
-        goalPosition = 0.35;
-        position = 0.85;
-        leftArm.setPosition(position); //vertical start
-        rightArm.setPosition(0);
+        goalPosition = 0.5;
+        position = 0;
+        rightArm.setPosition(position); //vertical start
+        leftArm.setPosition(0.85);
         // position
 
         state = States.TIME;
@@ -105,6 +94,8 @@ public class Auto_B1 extends OpMode {
         public void loop(){
             //telemetry.addData("Pitch:", drive.getPitch());
             //telemetry.update();
+            telemetry.addData("State:", state);
+            telemetry.update();
             switch(state){
                 /*case SCAN:
                     //Scans the pictograph to get correct column
@@ -115,29 +106,29 @@ public class Auto_B1 extends OpMode {
                         state = States.TIME;
                     } break;*/
                 case TIME:
-                    //Starts the timer
+                    //Starts the timer WORKING
                     time.reset();
                     state = States.ARMDOWN;
                     break;
                 case ARMDOWN:
-                    //Lowers left arm
-                    leftArm.setPosition(goalPosition);
+                    //Lowers right arm WORKING
+                    rightArm.setPosition(goalPosition);
                     if(time.seconds() >= 1.0){
-                        state = States.READ;
+                        state = States.READ; //READ
                     } break;
 
                 case READ:
-                    //Reads the color/distance sensor to determine which ball to knock off
-                    if(colorSensorLeft.blue() > colorSensorLeft.red()){
-                        telemetry.addData("Blue:", colorSensorLeft.blue());
-                        telemetry.addData("Red:", colorSensorLeft.red());
+                    //Reads the color/distance sensor to determine which ball to knock off WORKING
+                    if(colorSensorRight.blue() > colorSensorRight.red()){
+                        telemetry.addData("Blue:", colorSensorRight.blue());
+                        telemetry.addData("Red:", colorSensorRight.red());
                         telemetry.addData("The ball is:", "blue");
                         telemetry.update();
 
                         state = States.LEFTKNOCK;
-                    } else if(colorSensorLeft.red() > colorSensorLeft.blue()){
-                        telemetry.addData("Blue:", colorSensorLeft.blue());
-                        telemetry.addData("Red:", colorSensorLeft.red());
+                    } else if(colorSensorRight.red() > colorSensorRight.blue()){
+                        telemetry.addData("Blue:", colorSensorRight.blue());
+                        telemetry.addData("Red:", colorSensorRight.red());
                         telemetry.addData("The ball is:", "red");
                         telemetry.update();
 
@@ -145,9 +136,9 @@ public class Auto_B1 extends OpMode {
                     } break;
 
                 case LEFTKNOCK:
-                    //Knocks the left ball off of the pedestal
+                    //Knocks the left ball off of the pedestal WORKING
                     if(!isFinished){
-                        isFinished = drive.encoderDrive(DriveTrain.Direction.S, 0.25, 1);
+                        isFinished = drive.encoderDrive(DriveTrain.Direction.N, 0.25, 1);
                     } else{
                         isFinished = false;
                         state = States.LEFTARMUP;
@@ -155,9 +146,9 @@ public class Auto_B1 extends OpMode {
                     } break;
 
                 case RIGHTKNOCK:
-                    //Knocks the right ball off of the pedestal
+                    //Knocks the right ball off of the pedestal WORKING
                     if(!isFinished){
-                        isFinished = drive.encoderDrive(DriveTrain.Direction.N, 0.25, 1);
+                        isFinished = drive.encoderDrive(DriveTrain.Direction.S, 0.25, 0.5);
                     } else{
                         isFinished = false;
                         state = States.RIGHTARMUP;
@@ -165,23 +156,23 @@ public class Auto_B1 extends OpMode {
                     } break;
 
                 case LEFTARMUP:
-                    //Lifts arm up after knocking left ball
-                    leftArm.setPosition(0.85);
+                    //Lifts arm up after knocking left ball WORKING
+                    rightArm.setPosition(position);
                     if(time.seconds() >= 1){
                         state = States.LEFTZONE;
                     } break;
 
                 case RIGHTARMUP:
-                    //Lifts arm up after knocking right ball
-                    leftArm.setPosition(0.85);
+                    //Lifts arm up after knocking right ball WORKING
+                    rightArm.setPosition(position);
                     if(time.seconds() >= 1){
                         state = States.RIGHTZONE;
                     } break;
 
                 case LEFTZONE:
-                    //Returns to original position from knocking left ball
+                    //Returns to original position from knocking left ball WORKING
                     if(!isFinished){
-                        isFinished = drive.encoderDrive(DriveTrain.Direction.N, 0.25, 10);
+                        isFinished = drive.encoderDrive(DriveTrain.Direction.N, 0.25, 3);
                     } else{
                         isFinished = false;
                         state = States.TURNBOX;
@@ -189,9 +180,9 @@ public class Auto_B1 extends OpMode {
                     } break;
 
                 case RIGHTZONE:
-                    //Returns to original position from knocking right ball
+                    //Returns to original position from knocking right ball WORKING
                     if(!isFinished){
-                        isFinished = drive.encoderDrive(DriveTrain.Direction.N, 0.25, 3);
+                        isFinished = drive.encoderDrive(DriveTrain.Direction.N, 0.25, 10.5);
                     } else{
                         isFinished = false;
                         state = States.TURNBOX;
@@ -218,13 +209,14 @@ public class Auto_B1 extends OpMode {
                 case TURNBOX:
                     //Turns left to face CryptoBox. UNTESTED
                     if(!isFinished){
-                        isFinished = drive.gyroTurn(DriveTrain.Direction.TURNLEFT, 0.25, 90);
+                        isFinished = drive.gyroTurn(DriveTrain.Direction.TURNRIGHT, 0.25, 90);
                     } else{
                         isFinished = false;
                         state = States.DRIVEBOX;
                     } break;
 
                 case DRIVEBOX:
+                    //Drives into the CryptoBox
                     if(!isFinished){
                         isFinished = drive.encoderDrive(DriveTrain.Direction.N, 0.25, 1);
                     } else{
@@ -240,6 +232,7 @@ public class Auto_B1 extends OpMode {
         }
 
 }
+
 enum States {
     SCAN,
     TIME,

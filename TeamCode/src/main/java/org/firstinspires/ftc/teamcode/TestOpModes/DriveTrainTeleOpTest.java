@@ -1,19 +1,14 @@
 package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
-<<<<<<< HEAD
 import com.kauailabs.navx.ftc.AHRS;
-=======
->>>>>>> master
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 
-<<<<<<< HEAD
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-=======
->>>>>>> master
+
 import org.firstinspires.ftc.teamcode.DriveTrain;
 
 /**
@@ -38,22 +33,13 @@ public class DriveTrainTeleOpTest extends OpMode {
 
     private boolean isFinished;
 
-<<<<<<< HEAD
-    NavxMicroNavigationSensor gyroScope;
-=======
+
     NavxMicroNavigationSensor gyroReference;
->>>>>>> master
     IntegratingGyroscope gyro;
 
     @Override
     public void init() {
-<<<<<<< HEAD
 
-
-
-=======
-        
->>>>>>> master
         leftFront = hardwareMap.dcMotor.get("leftfront");
         rightFront = hardwareMap.dcMotor.get("rightfront");
         leftRear = hardwareMap.dcMotor.get("leftrear");
@@ -62,13 +48,9 @@ public class DriveTrainTeleOpTest extends OpMode {
         power = 0.1;
         finches = 5;
 
-<<<<<<< HEAD
-        gyroScope = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
-        gyro = (IntegratingGyroscope)gyroScope;
-=======
+
         gyroReference = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
         gyro = gyroReference;
->>>>>>> master
 
         driveTrain = new DriveTrain(leftFront, rightFront, leftRear, rightRear, gyro,  telemetry);
 
@@ -78,32 +60,11 @@ public class DriveTrainTeleOpTest extends OpMode {
     @Override
     public void loop() {
 
-<<<<<<< HEAD
 
-            if (gamepad1.dpad_down){
-                isFinished = driveTrain.encoderDrive(DriveTrain.Direction.S, power, finches);
-            }
-            else if(gamepad1.dpad_right){
-                isFinished = driveTrain.encoderDrive(DriveTrain.Direction.E, power, finches);
-            }
-            else if (gamepad1.dpad_up){
-                isFinished = driveTrain.encoderDrive(DriveTrain.Direction.N, power, finches);
-            }
-            else if (gamepad1.dpad_left) {
-                isFinished = driveTrain.encoderDrive(DriveTrain.Direction.W, power, finches);
-            } else if (gamepad1.a) {
-                isFinished = driveTrain.gyroTurn(DriveTrain.Direction.TURNRIGHT, power, 90);
-            }
-
-            if (isFinished) {
-                x = gamepad1.left_stick_x;
-                y = gamepad1.left_stick_y;
-=======
             if (isFinished) {
                 x = gamepad1.left_stick_x;
                 y = -gamepad1.left_stick_y;
->>>>>>> master
-                z = gamepad1.right_stick_x;
+                 z = gamepad1.right_stick_x;
 
                 driveTrain.setMotorPower(x, y, z);
             }
