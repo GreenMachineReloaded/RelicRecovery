@@ -197,24 +197,6 @@ public class Auto_B1 extends OpMode {
                         state = States.TURNBOX;
                         time.reset();
                     } break;
-
-                /*case DRIVEOFF:
-                    //Drives until robot is off balance stone. UNTESTED
-                    drive.drive(DriveTrain.Direction.N, 0.25);
-                    if(drive.getPitch() >= -1 && drive.getPitch() <= 1 && time.seconds() >= 0.1){
-                        drive.stop();
-                        state = States.END; //DRIVEZONE
-                    } break;*/
-
-                /*case DRIVEZONE:
-                    //Drives into the parking zone. UNTESTED/DEACTIVATED
-                    if(!isFinished){
-                        isFinished = drive.encoderDrive(DriveTrain.Direction.S, 0.25, 15);
-                    } else{
-                        isFinished = false;
-                        state = States.END; //TURNBOX
-                    } break;*/
-
                 case TURNBOX:
                     //Turns left to face CryptoBox. UNTESTED
                     if(!isFinished){
@@ -257,4 +239,3 @@ enum States {
     DRIVEBOX,
     END
 }
-
