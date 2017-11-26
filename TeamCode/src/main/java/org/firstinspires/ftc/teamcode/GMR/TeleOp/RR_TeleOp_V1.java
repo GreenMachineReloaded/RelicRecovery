@@ -17,10 +17,10 @@ public class RR_TeleOp_V1 extends OpMode {
     private int currentLiftPosition;
 
     private Robot robot;
-    private double topLeftPosition = 0.37;// Open 0.37, Close: 0
-    private double topRightPosition = 0.26;// Open: 0.26, Close: 0.65
-    private double bottomLeftPosition = 0.55;// Open: 0.55, Close: 0.117
-    private double bottomRightPosition = 0.2;// Open: 0.2, Close: 0.67
+    private double topLeftPosition = 0.37; //Open: 0.37, Close: 0
+    private double topRightPosition = 0.26; //Open: 0.26, Close: 0.65
+    private double bottomLeftPosition = 0.55; //Open: 0.55, Close: 0.117
+    private double bottomRightPosition = 0.2; //Open: 0.2, Close: 0.67
 
     private boolean letterButton = false;
 
@@ -35,32 +35,18 @@ public class RR_TeleOp_V1 extends OpMode {
         if (gamepad1.a) {
             bottomRightPosition = 0.2;
             bottomLeftPosition = 0.55;
-//            if (!letterButton) {
-//                currentLiftPosition += 15;
-//            }
         } else if (gamepad1.x) {
             bottomRightPosition = 0.67;
             bottomLeftPosition = 0.117;
-//            if (!letterButton) {
-//                currentLiftPosition -= 15;
-//            }
         }
 
         if (gamepad1.y) {
             topLeftPosition = 0.37;
             topRightPosition = 0.26;
-//            if (!letterButton) {
-//                currentLiftPosition -= 15;
-//            }
         } else if (gamepad1.b) {
             topLeftPosition = 0;
             topRightPosition = 0.65;
-//            if (!letterButton) {
-//                currentLiftPosition += 15;
-//            }
         }
-
-        letterButton = (gamepad1.a || gamepad1.b || gamepad1.x || gamepad1.y);
 
         if (gamepad1.right_bumper && robot.blockLift.liftMotor.getCurrentPosition() < 0) {
             robot.blockLift.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

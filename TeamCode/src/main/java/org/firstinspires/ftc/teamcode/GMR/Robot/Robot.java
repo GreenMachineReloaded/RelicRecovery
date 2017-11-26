@@ -53,7 +53,7 @@ public class Robot {
         leftColor = hardwareMap.servo.get("leftArm");
 
         rightColor.setPosition(0);
-        leftColor.setPosition(.85);
+        leftColor.setPosition(0.85);
 
         driveTrain = new DriveTrain(leftFront, rightFront, leftRear, rightRear, gyro, telemetry);
 

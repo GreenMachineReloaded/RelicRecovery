@@ -17,9 +17,6 @@ public class BlockLift {
     public Servo bottomLeftGrab;
     public Servo bottomRightGrab;
 
-    private int goalposition;
-    private double dynamicPower = 0;
-
     private int slidePosition = 1;
     private boolean buttonPressed = false;
 
@@ -71,4 +68,3 @@ public class BlockLift {
         }
     }
 }
-
