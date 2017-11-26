@@ -29,7 +29,7 @@ public class BlockLift {
         this.bottomRightGrab = bottomRightGrab;
 
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         topLeftGrab.setPosition(0.37);
         topRightGrab.setPosition(0.26);
@@ -48,7 +48,7 @@ public class BlockLift {
     public void slideHeight(boolean dpadUp, boolean dpadDown, Telemetry telemetry) {
 
         if ((dpadUp || dpadDown) && ((dpadUp || dpadDown) != buttonPressed)) {
-            if (dpadUp && !(slidePosition > 4)) {
+            if (dpadUp && !(slidePosition > 3)) {
                 slidePosition++;
             } else if (!(slidePosition < 1)) {
                 slidePosition--;
@@ -58,13 +58,19 @@ public class BlockLift {
         buttonPressed = (dpadUp || dpadDown);
 
         if (slidePosition == 1) {
+            liftMotor.setTargetPosition(0);
             telemetry.addData("Current Position", slidePosition);
         } else if (slidePosition == 2) {
+            liftMotor.setTargetPosition(-1768);
             telemetry.addData("Current Position", slidePosition);
         } else if (slidePosition == 3) {
-            telemetry.addData("Current Position", slidePosition);
-        } else if (slidePosition == 4) {
+            liftMotor.setTargetPosition(-4410);
             telemetry.addData("Current Position", slidePosition);
         }
+        /*
+        else if (slidePosition == 4) {
+            telemetry.addData("Current Position", slidePosition);
+        }
+        */
     }
 }
