@@ -80,19 +80,31 @@ public class BlockLift {
     }
 
     public void lift(boolean bumper, float trigger, Telemetry telemetry) {
-        if (bumper && liftMotor.getCurrentPosition() < 0) {
+        if (bumper /*&& liftMotor.getCurrentPosition() < 0*/) {
+            currentLiftPosition = liftMotor.getCurrentPosition();
             liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             liftMotor.setPower(1);
+        } else if (trigger > 0 /*&& liftMotor.getCurrentPosition() > -4400*/) {
             currentLiftPosition = liftMotor.getCurrentPosition();
-        } else if (trigger > 0) {
             liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             liftMotor.setPower(-1);
-            currentLiftPosition = liftMotor.getCurrentPosition();
         } else {
+            /*
+            if ((currentLiftPosition > 10 && liftMotor.getCurrentPosition() == 0) ||
+                    (currentLiftPosition < 10 && liftMotor.getCurrentPosition() == 0)) {
+                currentLiftPosition = liftMotor.getCurrentPosition();
+                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftMotor.setTargetPosition(currentLiftPosition);
+            } else {
+                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftMotor.setTargetPosition(currentLiftPosition);
+            }
+            */
             liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor.setTargetPosition(currentLiftPosition);
         }
         telemetry.addData("Current Lift Goal: ", currentLiftPosition);
+        telemetry.addData("Current Actual Position", liftMotor.getCurrentPosition());
     }
 
     public void setLift(int height) {

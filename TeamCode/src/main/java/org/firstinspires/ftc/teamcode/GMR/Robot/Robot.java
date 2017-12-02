@@ -58,6 +58,13 @@ public class Robot {
         driveTrain = new DriveTrain(leftFront, rightFront, leftRear, rightRear, gyro, telemetry);
 
         blockLift = new BlockLift(liftMotor, topLeftGrab, topRightGrab, bottomLeftGrab, bottomRightGrab);
+
+        blockLift.clamp(false, true, false, false);
+    }
+
+    public void setServos() {
+        rightColor.setPosition(0);
+        leftColor.setPosition(0.85);
     }
 
 }
