@@ -89,9 +89,7 @@ public class BlockLift {
             liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             liftMotor.setPower(-1);
         } else {
-            /*
-            if ((currentLiftPosition > 10 && liftMotor.getCurrentPosition() == 0) ||
-                    (currentLiftPosition < 10 && liftMotor.getCurrentPosition() == 0)) {
+            if ((Math.abs(Math.abs(currentLiftPosition) - Math.abs(liftMotor.getCurrentPosition()))) > 10)  {
                 currentLiftPosition = liftMotor.getCurrentPosition();
                 liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 liftMotor.setTargetPosition(currentLiftPosition);
@@ -99,9 +97,6 @@ public class BlockLift {
                 liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 liftMotor.setTargetPosition(currentLiftPosition);
             }
-            */
-            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor.setTargetPosition(currentLiftPosition);
         }
         telemetry.addData("Current Lift Goal: ", currentLiftPosition);
         telemetry.addData("Current Actual Position", liftMotor.getCurrentPosition());
