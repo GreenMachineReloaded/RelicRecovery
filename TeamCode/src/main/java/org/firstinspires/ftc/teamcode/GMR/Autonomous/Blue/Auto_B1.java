@@ -10,7 +10,12 @@ import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.GMR.Robot.Robot;
 import org.firstinspires.ftc.teamcode.GMR.Robot.SubSystems.DriveTrain;
 
@@ -41,6 +46,9 @@ public class Auto_B1 extends OpMode {
 
     private double position;
     private double goalPosition;
+
+
+
 
     private ElapsedTime time = new ElapsedTime();
 
@@ -77,7 +85,6 @@ public class Auto_B1 extends OpMode {
         //Starts the timer WORKING
         time.reset();
 
-
     }
         @Override
         public void loop(){
@@ -91,7 +98,7 @@ public class Auto_B1 extends OpMode {
                 case GRAB:
                     robot.blockLift.clamp(false,false, false, true);
                     state = States.LIFT;
-                    goalSeconds = currentSeconds + 0.4;
+                    goalSeconds = currentSeconds + 5;
                     break;
                 case LIFT:
                     if (currentSeconds >= goalSeconds) {
@@ -206,6 +213,7 @@ public class Auto_B1 extends OpMode {
 
 }
 enum States {
+    SCAN,
     TIME,
     ARMDOWN,
     READ,
