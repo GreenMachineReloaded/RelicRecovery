@@ -112,9 +112,6 @@ public class BlockLift {
         if (a) {
             bottomRightPosition = 0.2;
             bottomLeftPosition = 0.55;
-//            if (!bottomButtonPress) {
-//                setLift(500);
-//            }
         } else if (x) {
             bottomRightPosition = 0.67;
             bottomLeftPosition = 0.117;
@@ -126,9 +123,6 @@ public class BlockLift {
         } else if (b) {
             topLeftPosition = 0;
             topRightPosition = 0.65;
-//            if (!bottomButtonPress) {
-//                setLift(500);
-//            }
         }
 
         topButtonPress = b;

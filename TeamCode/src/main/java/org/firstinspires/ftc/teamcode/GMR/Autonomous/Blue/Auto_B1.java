@@ -35,13 +35,6 @@ public class Auto_B1 extends OpMode {
     private ColorSensor colorSensorLeft;
     private DistanceSensor distanceSensorLeft;
 
-    //OpenGLMatrix lastLocation = null;
-    //VuforiaLocalizer vuforia;
-
-    //VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-    //VuforiaTrackable relicTemplate = relicTrackables.get(0);
-    //RelicRecoveryVuMark vuMark;
-
     private States state;
 
     private boolean isFinished;
@@ -71,16 +64,6 @@ public class Auto_B1 extends OpMode {
 
         gyroscope = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-        parameters.vuforiaLicenseKey = "AUkgO0T/////AAAAGaYeMjdF+Us8tdP9fJcRhP9239Bwgzo0STjrR4II0s58wT/ja6GlSAQi/ptpHERhBhdNq8MMmlxC6bjyebsGnr/26IxYKhFFdC67Q7HE0jhDrsrEfxfJMFnsk2zSdt5ofwm2Z1xNhdBg2kfFCzdodI7aHFEdUQ6fddoTioTSPu9zzU9XqBr7Ra+5mTaIwp10heZmlXIjWfu8220ef/tZQ8QSmDX1GSqRLBjUJspesff8Nv9pkQAK3Nvp8YFHKJoFNkSV7QJW7mi/liHYq6DxYqhWk977WYGwzhHA003HNV4OUWhTLJGiPsiFhAlcJVbnVMn6ldnsSauT4unjXA9VBIzaYtSJc29UJYmWyin3MxPz";
-
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
-        //this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-
-        //relicTemplate.setName("relicVuMarkTemplate");
-
         robot = new Robot(hardwareMap, telemetry);
 
         goalPosition = 0.25;
@@ -92,26 +75,16 @@ public class Auto_B1 extends OpMode {
         state = States.TIME;
         isFinished = false;
 
+
         //Starts the timer WORKING
         time.reset();
 
-        //relicTrackables.activate();
 
     }
         @Override
         public void loop(){
             currentSeconds = time.seconds();
-            //telemetry.addData("Pitch:", robot.getPitch());
-            //telemetry.update();
             switch(state){
-                /*case SCAN:
-                    //Scans the pictograph to get correct column
-                    vuMark = RelicRecoveryVuMark.from(relicTemplate);
-                    if(vuMark != RelicRecoveryVuMark.UNKNOWN){
-                        telemetry.addData("Column:", vuMark);
-                        telemetry.update();
-                        state = States.TIME;
-                    } break;*/
                 case TIME:
                     //Starts the timer
                     state = States.GRAB;
@@ -262,7 +235,6 @@ public class Auto_B1 extends OpMode {
 
 }
 enum States {
-    SCAN,
     TIME,
     ARMDOWN,
     READ,
@@ -272,13 +244,10 @@ enum States {
     RIGHTARMUP,
     LEFTZONE,
     RIGHTZONE,
-    DRIVEOFF,
-    DRIVEZONE,
     TURNBOX,
     DRIVEBOX,
     DRIVEBACK,
     END,
-
     GRAB,
     DROP,
     LIFT
