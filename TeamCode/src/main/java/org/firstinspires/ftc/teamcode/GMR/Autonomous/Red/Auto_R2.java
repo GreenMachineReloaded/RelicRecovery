@@ -36,13 +36,6 @@ public class Auto_R2 extends OpMode {
     ColorSensor colorSensorRight;
     DistanceSensor distanceSensorRight;
 
-    //OpenGLMatrix lastLocation = null;
-    //VuforiaLocalizer vuforia;
-
-    //VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-    //VuforiaTrackable relicTemplate = relicTrackables.get(0);
-    //RelicRecoveryVuMark vuMark;
-
     private RedStates state;
 
     private boolean isFinished;
@@ -70,16 +63,6 @@ public class Auto_R2 extends OpMode {
 
         gyroscope = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-        parameters.vuforiaLicenseKey = "AUkgO0T/////AAAAGaYeMjdF+Us8tdP9fJcRhP9239Bwgzo0STjrR4II0s58wT/ja6GlSAQi/ptpHERhBhdNq8MMmlxC6bjyebsGnr/26IxYKhFFdC67Q7HE0jhDrsrEfxfJMFnsk2zSdt5ofwm2Z1xNhdBg2kfFCzdodI7aHFEdUQ6fddoTioTSPu9zzU9XqBr7Ra+5mTaIwp10heZmlXIjWfu8220ef/tZQ8QSmDX1GSqRLBjUJspesff8Nv9pkQAK3Nvp8YFHKJoFNkSV7QJW7mi/liHYq6DxYqhWk977WYGwzhHA003HNV4OUWhTLJGiPsiFhAlcJVbnVMn6ldnsSauT4unjXA9VBIzaYtSJc29UJYmWyin3MxPz";
-
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
-        //this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-
-        //relicTemplate.setName("relicVuMarkTemplate");
-
         robot = new Robot(hardwareMap, telemetry);
 
         goalPosition = 0.5;
@@ -91,26 +74,15 @@ public class Auto_R2 extends OpMode {
         state = RedStates.TIME;
         isFinished = false;
 
-        //relicTrackables.activate();
         time.reset();
 
     }
         @Override
         public void loop(){
         currentSeconds = time.seconds();
-            //telemetry.addData("Pitch:", drive.getPitch());
-            //telemetry.update();
             telemetry.addData("State:", state);
             telemetry.update();
             switch(state){
-                /*case SCAN:
-                    //Scans the pictograph to get correct column
-                    vuMark = RelicRecoveryVuMark.from(relicTemplate);
-                    if(vuMark != RelicRecoveryVuMark.UNKNOWN){
-                        telemetry.addData("Column:", vuMark);
-                        telemetry.update();
-                        state = States.TIME;
-                    } break;*/
                 case TIME:
                     state = RedStates.GRAB;
                     robot.blockLift.clamp(false,true, true, false);
@@ -204,23 +176,6 @@ public class Auto_R2 extends OpMode {
                         time.reset();
                     } break;
 
-                /*case DRIVEOFF:
-                    //Drives until robot is off balance stone. UNTESTED
-                    drive.drive(DriveTrain.Direction.N, 0.25);
-                    if(drive.getPitch() >= -1 && drive.getPitch() <= 1 && time.seconds() >= 0.1){
-                        drive.stop();
-                        state = States.END; //DRIVEZONE
-                    } break;*/
-
-                /*case DRIVEZONE:
-                    //Drives into the parking zone. UNTESTED/DEACTIVATED
-                    if(!isFinished){
-                        isFinished = drive.encoderDrive(DriveTrain.Direction.S, 0.25, 15);
-                    } else{
-                        isFinished = false;
-                        state = States.END; //TURNBOX
-                    } break;*/
-
                 case STRAFE:
                     //Strafes left to face CryptoBox. UNTESTED/DEACTIVATED
                     if(!isFinished){
@@ -260,7 +215,6 @@ public class Auto_R2 extends OpMode {
 }
 
 enum RedStates {
-    SCAN,
     TIME,
     ARMDOWN,
     READ,
@@ -270,13 +224,10 @@ enum RedStates {
     RIGHTARMUP,
     LEFTZONE,
     RIGHTZONE,
-    DRIVEOFF,
-    DRIVEZONE,
     STRAFE,
     DRIVEBOX,
     DRIVEBACK,
     END,
-
     GRAB,
     DROP,
     LIFT

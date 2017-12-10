@@ -77,14 +77,11 @@ public class Auto_B1 extends OpMode {
         //Starts the timer WORKING
         time.reset();
 
-        //relicTrackables.activate();
 
     }
         @Override
         public void loop(){
             currentSeconds = time.seconds();
-            //telemetry.addData("Pitch:", robot.getPitch());
-            //telemetry.update();
             switch(state){
                 case TIME:
                     //Starts the timer
@@ -209,7 +206,6 @@ public class Auto_B1 extends OpMode {
 
 }
 enum States {
-    SCAN,
     TIME,
     ARMDOWN,
     READ,
@@ -219,13 +215,10 @@ enum States {
     RIGHTARMUP,
     LEFTZONE,
     RIGHTZONE,
-    DRIVEOFF,
-    DRIVEZONE,
     TURNBOX,
     DRIVEBOX,
     DRIVEBACK,
     END,
-
     GRAB,
     DROP,
     LIFT
