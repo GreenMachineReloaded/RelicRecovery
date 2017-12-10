@@ -135,7 +135,6 @@ public class Auto_R1 extends OpMode {
                     if(currentSeconds >= goalSeconds){
                         state = States.READ; //READ
                     } break;
-
                 case READ:
                     //Reads the color/distance sensor to determine which ball to knock off WORKING
                     if(colorSensorRight.blue() > colorSensorRight.red()){
@@ -153,7 +152,6 @@ public class Auto_R1 extends OpMode {
 
                         state = States.RIGHTKNOCK;
                     } break;
-
                 case LEFTKNOCK:
                     //Knocks the left ball off of the pedestal WORKING
                     if(!isFinished){
@@ -163,7 +161,6 @@ public class Auto_R1 extends OpMode {
                         state = States.LEFTARMUP;
                         time.reset();
                     } break;
-
                 case RIGHTKNOCK:
                     //Knocks the right ball off of the pedestal WORKING
                     if(!isFinished){
@@ -173,21 +170,18 @@ public class Auto_R1 extends OpMode {
                         state = States.RIGHTARMUP;
                         time.reset();
                     } break;
-
                 case LEFTARMUP:
                     //Lifts arm up after knocking left ball WORKING
                     rightArm.setPosition(position);
                     if(time.seconds() >= 1){
                         state = States.LEFTZONE;
                     } break;
-
                 case RIGHTARMUP:
                     //Lifts arm up after knocking right ball WORKING
                     rightArm.setPosition(position);
                     if(time.seconds() >= 1){
                         state = States.RIGHTZONE;
                     } break;
-
                 case LEFTZONE:
                     //Returns to original position from knocking left ball WORKING
                     if(!isFinished){
@@ -197,7 +191,6 @@ public class Auto_R1 extends OpMode {
                         state = States.TURNBOX;
                         time.reset();
                     } break;
-
                 case RIGHTZONE:
                     //Returns to original position from knocking right ball WORKING
                     if(!isFinished){
@@ -207,24 +200,6 @@ public class Auto_R1 extends OpMode {
                         state = States.TURNBOX;
                         time.reset();
                     } break;
-
-                /*case DRIVEOFF:
-                    //Drives until robot is off balance stone. UNTESTED
-                    drive.drive(DriveTrain.Direction.N, 0.25);
-                    if(drive.getPitch() >= -1 && drive.getPitch() <= 1 && time.seconds() >= 0.1){
-                        drive.stop();
-                        state = States.END; //DRIVEZONE
-                    } break;*/
-
-                /*case DRIVEZONE:
-                    //Drives into the parking zone. UNTESTED/DEACTIVATED
-                    if(!isFinished){
-                        isFinished = drive.encoderDrive(DriveTrain.Direction.S, 0.25, 15);
-                    } else{
-                        isFinished = false;
-                        state = States.END; //TURNBOX
-                    } break;*/
-
                 case TURNBOX:
                     //Turns left to face CryptoBox. UNTESTED
                     if(!isFinished){
@@ -233,7 +208,6 @@ public class Auto_R1 extends OpMode {
                         isFinished = false;
                         state = States.DRIVEBOX;
                     } break;
-
                 case DRIVEBOX:
                     //Drives into the CryptoBox
                     if(!isFinished){
@@ -242,7 +216,6 @@ public class Auto_R1 extends OpMode {
                         isFinished = false;
                         state = States.DROP;
                     } break;
-
                 case DROP:
                     robot.blockLift.clamp(false, false,true, false);
                     state = States.DRIVEBACK;

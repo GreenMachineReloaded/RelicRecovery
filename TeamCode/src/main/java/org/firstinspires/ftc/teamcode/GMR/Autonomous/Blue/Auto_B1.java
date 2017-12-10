@@ -51,6 +51,9 @@ public class Auto_B1 extends OpMode {
 
     private ElapsedTime time = new ElapsedTime();
 
+    private double currentSeconds;
+    private double goalSeconds;
+
     @Override
     public void init() {
         rightFront = hardwareMap.dcMotor.get("rightfront");
@@ -87,11 +90,15 @@ public class Auto_B1 extends OpMode {
         state = States.TIME;
         isFinished = false;
 
+        //Starts the timer WORKING
+        time.reset();
+
         //relicTrackables.activate();
 
     }
         @Override
         public void loop(){
+            currentSeconds = time.seconds();
             //telemetry.addData("Pitch:", robot.getPitch());
             //telemetry.update();
             switch(state){
@@ -105,16 +112,27 @@ public class Auto_B1 extends OpMode {
                     } break;*/
                 case TIME:
                     //Starts the timer
-                    time.reset();
-                    state = States.ARMDOWN;
+                    state = States.GRAB;
+                    robot.blockLift.clamp(false,true, true, false);
+                    break;
+                case GRAB:
+                    robot.blockLift.clamp(false,false, false, true);
+                    state = States.LIFT;
+                    goalSeconds = currentSeconds + 0.4;
+                    break;
+                case LIFT:
+                    if (currentSeconds >= goalSeconds) {
+                        robot.blockLift.setLift(400);
+                        state = States.ARMDOWN;
+                        goalSeconds = currentSeconds += 1.0;
+                    }
                     break;
                 case ARMDOWN:
                     //Lowers left arm
                     leftArm.setPosition(goalPosition);
-                    if(time.seconds() >= 1.0){
-                        state = States.READ;
+                    if(currentSeconds >= goalSeconds){
+                        state = States.READ; //READ
                     } break;
-
                 case READ:
                     //Reads the color/distance sensor to determine which ball to knock off
                     if(colorSensorLeft.blue() > colorSensorLeft.red()){
@@ -132,7 +150,6 @@ public class Auto_B1 extends OpMode {
 
                         state = States.RIGHTKNOCK;
                     } break;
-
                 case LEFTKNOCK:
                     //Knocks the left ball off of the pedestal
                     if(!isFinished){
@@ -142,7 +159,6 @@ public class Auto_B1 extends OpMode {
                         state = States.LEFTARMUP;
                         time.reset();
                     } break;
-
                 case RIGHTKNOCK:
                     //Knocks the right ball off of the pedestal
                     if(!isFinished){
@@ -152,35 +168,31 @@ public class Auto_B1 extends OpMode {
                         state = States.RIGHTARMUP;
                         time.reset();
                     } break;
-
                 case LEFTARMUP:
                     //Lifts arm up after knocking left ball
                     leftArm.setPosition(0.85);
                     if(time.seconds() >= 1){
                         state = States.LEFTZONE;
                     } break;
-
                 case RIGHTARMUP:
                     //Lifts arm up after knocking right ball
                     leftArm.setPosition(0.85);
                     if(time.seconds() >= 1){
                         state = States.RIGHTZONE;
                     } break;
-
                 case LEFTZONE:
                     //Returns to original position from knocking left ball
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.25, 10);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 10);
                     } else{
                         isFinished = false;
                         state = States.TURNBOX;
                         time.reset();
                     } break;
-
                 case RIGHTZONE:
                     //Returns to original position from knocking right ball
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.25, 3);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 3);
                     } else{
                         isFinished = false;
                         state = States.TURNBOX;
@@ -194,15 +206,24 @@ public class Auto_B1 extends OpMode {
                         isFinished = false;
                         state = States.DRIVEBOX;
                     } break;
-
                 case DRIVEBOX:
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.25, 1);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.25, 3);
+                    } else{
+                        isFinished = false;
+                        state = States.DROP;
+                    } break;
+                case DROP:
+                    robot.blockLift.clamp(false, false,true, false);
+                    state = States.DRIVEBACK;
+                    break;
+                case DRIVEBACK:
+                    if(!isFinished){
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.3, 1.5);
                     } else{
                         isFinished = false;
                         state = States.END;
                     } break;
-
                 case END:
                     robot.driveTrain.stop();
                     break;
@@ -226,5 +247,10 @@ enum States {
     DRIVEZONE,
     TURNBOX,
     DRIVEBOX,
-    END
+    DRIVEBACK,
+    END,
+
+    GRAB,
+    DROP,
+    LIFT
 }
