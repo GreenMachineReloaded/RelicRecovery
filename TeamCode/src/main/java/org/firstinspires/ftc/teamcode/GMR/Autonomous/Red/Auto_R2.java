@@ -187,7 +187,7 @@ public class Auto_R2 extends OpMode {
                 case LEFTZONE:
                     //Returns to original position from knocking left ball WORKING
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 2);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 2.5);
                     } else{
                         isFinished = false;
                         state = RedStates.STRAFE;
@@ -197,7 +197,7 @@ public class Auto_R2 extends OpMode {
                 case RIGHTZONE:
                     //Returns to original position from knocking right ball WORKING
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 9);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 9.5);
                     } else{
                         isFinished = false;
                         state = RedStates.STRAFE;
@@ -224,7 +224,7 @@ public class Auto_R2 extends OpMode {
                 case STRAFE:
                     //Strafes left to face CryptoBox. UNTESTED/DEACTIVATED
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.W, 0.3, 2);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.W, 0.3, 3.5);
                     } else{
                         isFinished = false;
                         state = RedStates.DRIVEBOX;
@@ -233,7 +233,7 @@ public class Auto_R2 extends OpMode {
                 case DRIVEBOX:
                     //Drives into CryptoBox
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.3, 2);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.3, 3.5);
                     } else{
                         isFinished = false;
                         state = RedStates.DROP;

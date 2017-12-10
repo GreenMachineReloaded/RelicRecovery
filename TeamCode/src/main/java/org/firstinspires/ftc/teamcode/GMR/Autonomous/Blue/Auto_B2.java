@@ -81,7 +81,7 @@ public class Auto_B2 extends OpMode {
 
         robot = new Robot(hardwareMap, telemetry);
 
-        goalPosition = 0.35;
+        goalPosition = 0.25;
         position = 0.85;
         leftArm.setPosition(position); //vertical start
         rightArm.setPosition(0);
@@ -183,7 +183,7 @@ public class Auto_B2 extends OpMode {
                 case LEFTZONE:
                     //Returns to original position from knocking left ball WORKING
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.3, 8);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 9.5);
                     } else{
                         isFinished = false;
                         state = BlueStates.STRAFE;
@@ -193,7 +193,7 @@ public class Auto_B2 extends OpMode {
                 case RIGHTZONE:
                     //Returns to original position from knocking right ball WORKING
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.3, 2);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 2.5);
                     } else{
                         isFinished = false;
                         state = BlueStates.STRAFE;
@@ -220,7 +220,7 @@ public class Auto_B2 extends OpMode {
                 case STRAFE:
                     //Turns left to face CryptoBox. WORKING
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.E, 0.3, 2);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.E, 0.3, 3);
                     } else{
                         isFinished = false;
                         state = BlueStates.DRIVEBOX;
@@ -229,7 +229,7 @@ public class Auto_B2 extends OpMode {
                 case DRIVEBOX:
                     //Drives into CryptoBox
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.3, 2);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.3, 3.5);
                     } else{
                         isFinished = false;
                         state = BlueStates.DROP;
