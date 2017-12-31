@@ -52,6 +52,8 @@ public class Auto_R1 extends OpMode {
     OpenGLMatrix lastLocation = null;
     VuforiaLocalizer vuforia;
 
+    VuforiaTrackable relicTemplate;
+    VuforiaTrackables relicTrackables;
 
 
     private ElapsedTime time = new ElapsedTime();
@@ -90,8 +92,8 @@ public class Auto_R1 extends OpMode {
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
 
         state = States.SCAN;
@@ -99,15 +101,14 @@ public class Auto_R1 extends OpMode {
 
         //Starts the timer WORKING
         time.reset();
+        relicTemplate
 
-        //relicTrackables.activate();
+        relicTrackables.activate();
 
     }
         @Override
         public void loop(){
         currentSeconds = time.seconds();
-            telemetry.addData("State:", state);
-            telemetry.update();
             switch(state){
                 case SCAN:
                     //Scans the pictograph to get correct column
