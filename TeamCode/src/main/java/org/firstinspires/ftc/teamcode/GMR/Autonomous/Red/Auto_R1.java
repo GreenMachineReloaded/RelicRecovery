@@ -82,8 +82,6 @@ public class Auto_R1 extends OpMode {
         @Override
         public void loop(){
         currentSeconds = time.seconds();
-            telemetry.addData("State:", state);
-            telemetry.update();
             switch(state){
                 case TIME:
                     state = States.GRAB;
@@ -92,7 +90,7 @@ public class Auto_R1 extends OpMode {
                 case GRAB:
                     robot.blockLift.clamp(false,false, false, true);
                     state = States.LIFT;
-                    goalSeconds = currentSeconds + 0.4;
+                    goalSeconds = currentSeconds + 5;
                     break;
                 case LIFT:
                     if (currentSeconds >= goalSeconds) {
@@ -206,5 +204,4 @@ public class Auto_R1 extends OpMode {
 
         }
 }
-
 
