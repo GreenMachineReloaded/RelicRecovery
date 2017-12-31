@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
 import org.firstinspires.ftc.teamcode.GMR.Autonomous.States;
 import org.firstinspires.ftc.teamcode.GMR.Robot.Robot;
 import org.firstinspires.ftc.teamcode.GMR.Robot.SubSystems.DriveTrain;
@@ -246,9 +245,9 @@ public class Auto_B1 extends OpMode {
                 case OPEN:
                     robot.blockLift.clamp(false, true, true, false);
                     if (currentSeconds >= goalSeconds) {
-                        state = States.DRIVEBACK2;
+                        state = States.BACKUPFROMBLOCK;
                     }
-                case DRIVEBACK2:
+                case BACKUPFROMBLOCK:
                     if(!isFinished){
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.3, 1.5);
                     } else{
@@ -267,7 +266,5 @@ public class Auto_B1 extends OpMode {
                     break;
             }
             telemetry.addData("State Check: ", stageCheck);
-
         }
-
 }
