@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.teamcode.GMR.Autonomous.States;
 import org.firstinspires.ftc.teamcode.GMR.Robot.Robot;
 import org.firstinspires.ftc.teamcode.GMR.Robot.SubSystems.DriveTrain;
 
@@ -220,11 +220,44 @@ public class Auto_B1 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.3, 1.5);
                     } else{
                         isFinished = false;
-                        state = States.END;
+                        state = States.CLOSE;
                         stageCheck += "DriveBack - ";
                         stageCheck += "End";
+                        goalSeconds = currentSeconds += 0.4;
                     }
                     break;
+                case CLOSE:
+                    robot.blockLift.clamp(true, false, false, true);
+                    if (currentSeconds >= goalSeconds) {
+                        state = States.DRIVEFORWARD;
+                    }
+                case DRIVEFORWARD:
+                    if (!isFinished) {
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.3, 1.5);
+                    } else {
+                        isFinished = false;
+                        state = States.OPEN;
+                        goalSeconds = currentSeconds += 0.4;
+                    }
+                case OPEN:
+                    robot.blockLift.clamp(false, true, true, false);
+                    if (currentSeconds >= goalSeconds) {
+                        state = States.DRIVEBACK2;
+                    }
+                case DRIVEBACK2:
+                    if(!isFinished){
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.3, 1.5);
+                    } else{
+                        isFinished = false;
+                        state = States.ROTATE;
+                    }
+                case ROTATE:
+                    if (!isFinished) {
+                        isFinished = robot.driveTrain.gyroTurn(DriveTrain.Direction.TURNRIGHT, 0.3, 180);
+                    } else {
+                        isFinished = false;
+                        state = States.END;
+                    }
                 case END:
                     robot.driveTrain.stop();
                     break;
@@ -233,22 +266,4 @@ public class Auto_B1 extends OpMode {
 
         }
 
-}
-enum States {
-    TIME,
-    ARMDOWN,
-    READ,
-    LEFTKNOCK,
-    RIGHTKNOCK,
-    LEFTARMUP,
-    RIGHTARMUP,
-    LEFTZONE,
-    RIGHTZONE,
-    TURNBOX,
-    DRIVEBOX,
-    DRIVEBACK,
-    END,
-    GRAB,
-    DROP,
-    LIFT
 }
