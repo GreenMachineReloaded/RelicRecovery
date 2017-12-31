@@ -101,7 +101,6 @@ public class Auto_R1 extends OpMode {
 
         //Starts the timer WORKING
         time.reset();
-        relicTemplate
 
         relicTrackables.activate();
 
