@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.GMR.Autonomous.States;
+import org.firstinspires.ftc.teamcode.GMR.Autonomous.State;
 import org.firstinspires.ftc.teamcode.GMR.Robot.Robot;
 import org.firstinspires.ftc.teamcode.GMR.Robot.SubSystems.DriveTrain;
 
@@ -38,7 +38,7 @@ public class Auto_R2 extends OpMode {
 
     private boolean isFinished;
 
-    States state;
+    State state;
 
     private double position;
     private double goalPosition;
@@ -71,7 +71,7 @@ public class Auto_R2 extends OpMode {
         leftArm.setPosition(0.85);
         // position
 
-        state = States.TIME;
+        state = State.TIME;
         isFinished = false;
 
         time.reset();
@@ -84,24 +84,24 @@ public class Auto_R2 extends OpMode {
             telemetry.update();
             switch(state){
                 case TIME:
-                    state = States.GRAB;
+                    state = State.GRAB;
                     robot.blockLift.clamp(false,true, true, false);
                     break;
                 case GRAB:
                     robot.blockLift.clamp(false,false, false, true);
-                    state = States.LIFT;
+                    state = State.LIFT;
                     goalSeconds = currentSeconds + 0.4;
                 case LIFT:
                     if (currentSeconds >= goalSeconds) {
                         robot.blockLift.setLift(700);
-                        state = States.ARMDOWN;
+                        state = State.ARMDOWN;
                         goalSeconds = currentSeconds += 2.0;
                     }
                 case ARMDOWN:
                     //Lowers right arm WORKING
                     rightArm.setPosition(goalPosition);
                     if(currentSeconds >= goalSeconds){
-                        state = States.READ; //READ
+                        state = State.READ; //READ
                     } break;
 
                 case READ:
@@ -112,14 +112,14 @@ public class Auto_R2 extends OpMode {
                         telemetry.addData("The ball is:", "blue");
                         telemetry.update();
 
-                        state = States.LEFTKNOCK;
+                        state = State.LEFTKNOCK;
                     } else if(colorSensorRight.red() > colorSensorRight.blue()){
                         telemetry.addData("Blue:", colorSensorRight.blue());
                         telemetry.addData("Red:", colorSensorRight.red());
                         telemetry.addData("The ball is:", "red");
                         telemetry.update();
 
-                        state = States.RIGHTKNOCK;
+                        state = State.RIGHTKNOCK;
                     } break;
 
                 case LEFTKNOCK:
@@ -128,7 +128,7 @@ public class Auto_R2 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.25, 1);
                     } else{
                         isFinished = false;
-                        state = States.LEFTARMUP;
+                        state = State.LEFTARMUP;
                         time.reset();
                     } break;
 
@@ -138,7 +138,7 @@ public class Auto_R2 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.25, 0.5);
                     } else{
                         isFinished = false;
-                        state = States.RIGHTARMUP;
+                        state = State.RIGHTARMUP;
                         time.reset();
                     } break;
 
@@ -146,14 +146,14 @@ public class Auto_R2 extends OpMode {
                     //Lifts arm up after knocking left ball WORKING
                     rightArm.setPosition(position);
                     if(time.seconds() >= 1){
-                        state = States.LEFTZONE;
+                        state = State.LEFTZONE;
                     } break;
 
                 case RIGHTARMUP:
                     //Lifts arm up after knocking right ball WORKING
                     rightArm.setPosition(position);
                     if(time.seconds() >= 1){
-                        state = States.RIGHTZONE;
+                        state = State.RIGHTZONE;
                     } break;
 
                 case LEFTZONE:
@@ -162,7 +162,7 @@ public class Auto_R2 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 2.5);
                     } else{
                         isFinished = false;
-                        state = States.STRAFE;
+                        state = State.STRAFE;
                         time.reset();
                     } break;
                 case RIGHTZONE:
@@ -171,7 +171,7 @@ public class Auto_R2 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 9.5);
                     } else{
                         isFinished = false;
-                        state = States.STRAFE;
+                        state = State.STRAFE;
                         time.reset();
                     } break;
 
@@ -181,7 +181,7 @@ public class Auto_R2 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.W, 0.3, 3.5);
                     } else{
                         isFinished = false;
-                        state = States.DRIVEBOX;
+                        state = State.DRIVEBOX;
                     } break;
 
                 case DRIVEBOX:
@@ -190,19 +190,19 @@ public class Auto_R2 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.3, 3.5);
                     } else{
                         isFinished = false;
-                        state = States.DROP;
+                        state = State.DROP;
                     } break;
 
                 case DROP:
                     robot.blockLift.clamp(false, false,true, false);
-                    state = States.DRIVEBACK;
+                    state = State.DRIVEBACK;
                     break;
                 case DRIVEBACK:
                     if(!isFinished){
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.3, 1.5);
                     } else{
                         isFinished = false;
-                        state = States.END;
+                        state = State.END;
                     } break;
 
                 case END:

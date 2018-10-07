@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.GMR.Autonomous.States;
+import org.firstinspires.ftc.teamcode.GMR.Autonomous.State;
 import org.firstinspires.ftc.teamcode.GMR.Robot.Robot;
 import org.firstinspires.ftc.teamcode.GMR.Robot.SubSystems.DriveTrain;
 
@@ -35,7 +35,7 @@ public class Auto_B1 extends OpMode {
     private ColorSensor colorSensorLeft;
     private DistanceSensor distanceSensorLeft;
 
-    private States state;
+    private State state;
 
     private boolean isFinished;
 
@@ -75,7 +75,7 @@ public class Auto_B1 extends OpMode {
         rightArm.setPosition(0);
         // position
 
-        state = States.TIME;
+        state = State.TIME;
         isFinished = false;
 
 
@@ -89,13 +89,13 @@ public class Auto_B1 extends OpMode {
             switch(state){
                 case TIME:
                     //Starts the timer
-                    state = States.GRAB;
+                    state = State.GRAB;
                     robot.blockLift.clamp(false,true, true, false);
                     stageCheck += "Time - ";
                     break;
                 case GRAB:
                     robot.blockLift.clamp(false,false, false, true);
-                    state = States.LIFT;
+                    state = State.LIFT;
 
                     goalSeconds = currentSeconds + 0.5;
                     stageCheck += "Grab - ";
@@ -103,7 +103,7 @@ public class Auto_B1 extends OpMode {
                 case LIFT:
                     if (currentSeconds >= goalSeconds) {
                         robot.blockLift.setLift(500);
-                        state = States.ARMDOWN;
+                        state = State.ARMDOWN;
                         goalSeconds = currentSeconds += 1.0;
                         stageCheck += "Lift - ";
                     }
@@ -112,7 +112,7 @@ public class Auto_B1 extends OpMode {
                     //Lowers left arm
                     leftArm.setPosition(goalPosition);
                     if(currentSeconds >= goalSeconds){
-                        state = States.READ; //READ
+                        state = State.READ; //READ
                         stageCheck += "Arm Down - ";
                     }
                     break;
@@ -124,7 +124,7 @@ public class Auto_B1 extends OpMode {
                         telemetry.addData("The ball is:", "blue");
                         telemetry.update();
 
-                        state = States.LEFTKNOCK;
+                        state = State.LEFTKNOCK;
                         stageCheck += "Read - ";
                     } else if(colorSensorLeft.red() > colorSensorLeft.blue()){
                         telemetry.addData("Blue:", colorSensorLeft.blue());
@@ -132,7 +132,7 @@ public class Auto_B1 extends OpMode {
                         telemetry.addData("The ball is:", "red");
                         telemetry.update();
 
-                        state = States.RIGHTKNOCK;
+                        state = State.RIGHTKNOCK;
                     }
                     break;
                 case LEFTKNOCK:
@@ -141,7 +141,7 @@ public class Auto_B1 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.25, 1);
                     } else{
                         isFinished = false;
-                        state = States.LEFTARMUP;
+                        state = State.LEFTARMUP;
                         time.reset();
                         stageCheck += "Left Knock - ";
                     }
@@ -152,7 +152,7 @@ public class Auto_B1 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.25, 1);
                     } else{
                         isFinished = false;
-                        state = States.RIGHTARMUP;
+                        state = State.RIGHTARMUP;
                         time.reset();
                         stageCheck += "Right Knock - ";
                     }
@@ -161,7 +161,7 @@ public class Auto_B1 extends OpMode {
                     //Lifts arm up after knocking left ball
                     leftArm.setPosition(0.85);
                     if(time.seconds() >= 1){
-                        state = States.LEFTZONE;
+                        state = State.LEFTZONE;
                         stageCheck += "Left Arm Up - ";
                     }
                     break;
@@ -169,7 +169,7 @@ public class Auto_B1 extends OpMode {
                     //Lifts arm up after knocking right ball
                     leftArm.setPosition(0.85);
                     if(time.seconds() >= 1){
-                        state = States.RIGHTZONE;
+                        state = State.RIGHTZONE;
                         stageCheck += "Right Arm Up - ";
                     }
                     break;
@@ -179,7 +179,7 @@ public class Auto_B1 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 10 );
                     } else{
                         isFinished = false;
-                        state = States.TURNBOX;
+                        state = State.TURNBOX;
                         time.reset();
                         stageCheck += "Left Zone - ";
                     }
@@ -190,7 +190,7 @@ public class Auto_B1 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 5);
                     } else{
                         isFinished = false;
-                        state = States.TURNBOX;
+                        state = State.TURNBOX;
                         time.reset();
                         stageCheck += "Right Zone - ";
                     }
@@ -201,7 +201,7 @@ public class Auto_B1 extends OpMode {
                         isFinished = robot.driveTrain.gyroTurn(DriveTrain.Direction.TURNLEFT, 0.25, 90);
                     } else{
                         isFinished = false;
-                        state = States.DRIVEBOX;
+                        state = State.DRIVEBOX;
                         stageCheck += "Turn Box - ";
                     }
                     break;
@@ -210,20 +210,20 @@ public class Auto_B1 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.25, 3);
                     } else{
                         isFinished = false;
-                        state = States.DROP;
+                        state = State.DROP;
                         stageCheck += "Drive Box - ";
                     }
                     break;
                 case DROP:
                     robot.blockLift.clamp(false, false,true, false);
-                    state = States.DRIVEBACK;
+                    state = State.DRIVEBACK;
                     break;
                 case DRIVEBACK:
                     if(!isFinished){
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.3, 1.5);
                     } else{
                         isFinished = false;
-                        state = States.CLOSE;
+                        state = State.CLOSE;
                         stageCheck += "DriveBack - ";
                         stageCheck += "End";
                         goalSeconds = currentSeconds += 0.4;
@@ -232,34 +232,34 @@ public class Auto_B1 extends OpMode {
                 case CLOSE:
                     robot.blockLift.clamp(true, false, false, true);
                     if (currentSeconds >= goalSeconds) {
-                        state = States.DRIVEFORWARD;
+                        state = State.DRIVEFORWARD;
                     }
                 case DRIVEFORWARD:
                     if (!isFinished) {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.3, 1.5);
                     } else {
                         isFinished = false;
-                        state = States.OPEN;
+                        state = State.OPEN;
                         goalSeconds = currentSeconds += 0.4;
                     }
                 case OPEN:
                     robot.blockLift.clamp(false, true, true, false);
                     if (currentSeconds >= goalSeconds) {
-                        state = States.BACKUPFROMBLOCK;
+                        state = State.BACKUPFROMBLOCK;
                     }
                 case BACKUPFROMBLOCK:
                     if(!isFinished){
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.3, 1.5);
                     } else{
                         isFinished = false;
-                        state = States.ROTATE;
+                        state = State.ROTATE;
                     }
                 case ROTATE:
                     if (!isFinished) {
                         isFinished = robot.driveTrain.gyroTurn(DriveTrain.Direction.TURNRIGHT, 0.3, 180);
                     } else {
                         isFinished = false;
-                        state = States.END;
+                        state = State.END;
                     }
                 case END:
                     robot.driveTrain.stop();

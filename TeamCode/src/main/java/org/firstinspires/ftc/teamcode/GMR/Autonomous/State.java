@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.GMR.Autonomous;
  * Created by pston on 12/31/2017
  */
 
-public enum States {
+public enum State {
     TIME,
     ARMDOWN,
     READ,

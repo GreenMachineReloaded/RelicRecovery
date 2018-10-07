@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.GMR.Autonomous.States;
+import org.firstinspires.ftc.teamcode.GMR.Autonomous.State;
 import org.firstinspires.ftc.teamcode.GMR.Robot.Robot;
 import org.firstinspires.ftc.teamcode.GMR.Robot.SubSystems.DriveTrain;
 
@@ -37,7 +37,7 @@ public class Auto_R1 extends OpMode {
     DistanceSensor distanceSensorRight;
 
 
-    private States state;
+    private State state;
 
     private boolean isFinished;
 
@@ -72,7 +72,7 @@ public class Auto_R1 extends OpMode {
         leftArm.setPosition(0.85);
         // position
 
-        state = States.TIME;
+        state = State.TIME;
         isFinished = false;
 
         //Starts the timer WORKING
@@ -84,18 +84,18 @@ public class Auto_R1 extends OpMode {
         currentSeconds = time.seconds();
             switch(state){
                 case TIME:
-                    state = States.GRAB;
+                    state = State.GRAB;
                     robot.blockLift.clamp(false,true, true, false);
                     break;
                 case GRAB:
                     robot.blockLift.clamp(false,false, false, true);
-                    state = States.LIFT;
+                    state = State.LIFT;
                     goalSeconds = currentSeconds + 5;
                     break;
                 case LIFT:
                     if (currentSeconds >= goalSeconds) {
                         robot.blockLift.setLift(400);
-                        state = States.ARMDOWN;
+                        state = State.ARMDOWN;
                         goalSeconds = currentSeconds += 1.0;
                     }
                     break;
@@ -103,7 +103,7 @@ public class Auto_R1 extends OpMode {
                     //Lowers right arm WORKING
                     rightArm.setPosition(goalPosition);
                     if(currentSeconds >= goalSeconds){
-                        state = States.READ; //READ
+                        state = State.READ; //READ
                     } break;
                 case READ:
                     //Reads the color/distance sensor to determine which ball to knock off WORKING
@@ -113,14 +113,14 @@ public class Auto_R1 extends OpMode {
                         telemetry.addData("The ball is:", "blue");
                         telemetry.update();
 
-                        state = States.LEFTKNOCK;
+                        state = State.LEFTKNOCK;
                     } else if(colorSensorRight.red() > colorSensorRight.blue()){
                         telemetry.addData("Blue:", colorSensorRight.blue());
                         telemetry.addData("Red:", colorSensorRight.red());
                         telemetry.addData("The ball is:", "red");
                         telemetry.update();
 
-                        state = States.RIGHTKNOCK;
+                        state = State.RIGHTKNOCK;
                     } break;
                 case LEFTKNOCK:
                     //Knocks the left ball off of the pedestal WORKING
@@ -128,7 +128,7 @@ public class Auto_R1 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.25, 1);
                     } else{
                         isFinished = false;
-                        state = States.LEFTARMUP;
+                        state = State.LEFTARMUP;
                         time.reset();
                     } break;
                 case RIGHTKNOCK:
@@ -137,20 +137,20 @@ public class Auto_R1 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.25, 0.5);
                     } else{
                         isFinished = false;
-                        state = States.RIGHTARMUP;
+                        state = State.RIGHTARMUP;
                         time.reset();
                     } break;
                 case LEFTARMUP:
                     //Lifts arm up after knocking left ball WORKING
                     rightArm.setPosition(position);
                     if(time.seconds() >= 1){
-                        state = States.LEFTZONE;
+                        state = State.LEFTZONE;
                     } break;
                 case RIGHTARMUP:
                     //Lifts arm up after knocking right ball WORKING
                     rightArm.setPosition(position);
                     if(time.seconds() >= 1){
-                        state = States.RIGHTZONE;
+                        state = State.RIGHTZONE;
                     } break;
                 case LEFTZONE:
                     //Returns to original position from knocking left ball WORKING
@@ -158,7 +158,7 @@ public class Auto_R1 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 7);
                     } else{
                         isFinished = false;
-                        state = States.TURNBOX;
+                        state = State.TURNBOX;
                         time.reset();
                     } break;
                 case RIGHTZONE:
@@ -167,7 +167,7 @@ public class Auto_R1 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 12);
                     } else{
                         isFinished = false;
-                        state = States.TURNBOX;
+                        state = State.TURNBOX;
                         time.reset();
                     } break;
                 case TURNBOX:
@@ -176,7 +176,7 @@ public class Auto_R1 extends OpMode {
                         isFinished = robot.driveTrain.gyroTurn(DriveTrain.Direction.TURNRIGHT, 0.25, 90);
                     } else{
                         isFinished = false;
-                        state = States.DRIVEBOX;
+                        state = State.DRIVEBOX;
                     } break;
                 case DRIVEBOX:
                     //Drives into the CryptoBox
@@ -184,18 +184,18 @@ public class Auto_R1 extends OpMode {
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.25, 3);
                     } else{
                         isFinished = false;
-                        state = States.DROP;
+                        state = State.DROP;
                     } break;
                 case DROP:
                     robot.blockLift.clamp(false, false,true, false);
-                    state = States.DRIVEBACK;
+                    state = State.DRIVEBACK;
                     break;
                 case DRIVEBACK:
                     if(!isFinished){
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.3, 1.5);
                     } else{
                         isFinished = false;
-                        state = States.END;
+                        state = State.END;
                     } break;
                 case END:
                     robot.driveTrain.stop();
