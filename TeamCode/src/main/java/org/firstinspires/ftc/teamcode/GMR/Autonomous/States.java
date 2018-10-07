@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode.GMR.Autonomous;
  */
 
 public enum States {
+    SCAN,
     TIME,
     ARMDOWN,
     READ,
@@ -19,12 +20,19 @@ public enum States {
     DRIVEBACK,
     STRAFE,
     END,
-    GRAB,
     DROP,
-    LIFT,
-    CLOSE,
-    DRIVEFORWARD,
-    OPEN,
-    BACKUPFROMBLOCK,
-    ROTATE
+    OFFSTONE,
+    CENTER,
+    GLYPHPITTURN,
+    GRAB,
+    GLYPHPITDRIVE,
+    HOLD,
+    CRYPTOTURN,
+    CRYPTODRIVE,
+    ALTCOLUMN,
+    DRIVEBOX2,
+    DROP2,
+    DRIVEBACK2,
+    GLYPHPITTURN2,
+    STRAIGHTEN
 }

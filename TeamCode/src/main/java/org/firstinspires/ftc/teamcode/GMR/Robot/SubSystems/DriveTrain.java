@@ -59,6 +59,10 @@ public class DriveTrain {
     private double degreesSetup;
     private int zonedDegrees;
     private float yaw;
+
+    private float currentYaw;
+
+    private boolean isTurning = false;
     //////////////////////////////////// CONSTRUCT
 
     //calls the second constructor of DriveTrain and passes a reference to the hardware map, telemetry, the 4 string names of the motors in the order left front, right front, left back, right back and the port reference to the gyro.
@@ -119,6 +123,30 @@ public class DriveTrain {
         this.rightFront.setPower(Range.clip((y-x-z),-1,1));
         this.leftRear.setPower(Range.clip(-(y-x+z),-1,1));
         this.rightRear.setPower(Range.clip((y+x-z), -1, 1));
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void setMotorPowerSlow(double x, double y, double z){
+        /*
+        Guide to motor Powers:
+        Left Front: - (y + x + Z)
+        Right Front: y - x - z
+        Left Rear: y + x - z
+        Right Rear: - (y - x + z)
+         */
+        this.leftFront.setPower(Range.clip(-(y+x+z),-0.2,0.2));
+        this.rightFront.setPower(Range.clip((y-x-z),-0.2,0.2));
+        this.leftRear.setPower(Range.clip(-(y-x+z),-0.2,0.21));
+        this.rightRear.setPower(Range.clip((y+x-z), -0.2, 0.2));
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     //A zoned drive that makes it easier to move in the sixteen different directions listed, using the joystick
@@ -319,7 +347,6 @@ public class DriveTrain {
         int rightStrafeValue = ((getLeftEncoder() + -getRightEncoder()) / 2);
 
         if (encodersCanRun){
-            currentGyro = getYaw();
             goalEncoderPosition = (combinedEnValue + (inches * countsPerInch));
             goalBackwardPosition = (combinedEnValue - (inches * countsPerInch));
             goalLeftPosition = (getLeftEncoder() + (inches * countsPerInch));
@@ -334,7 +361,7 @@ public class DriveTrain {
                 case N:
                     if (combinedEnValue < goalEncoderPosition) {
                         drive(direction, power);
-                        telemetry.addData("Current Combined Value", combinedEnValue);
+                        //telemetry.addData("Current Combined Value", combinedEnValue);
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
@@ -346,7 +373,7 @@ public class DriveTrain {
                 case S:
                     if (combinedEnValue > goalBackwardPosition) {
                         drive(direction, power);
-                        telemetry.addData("Current Combined Value", combinedEnValue);
+                        //telemetry.addData("Current Combined Value", combinedEnValue);
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
@@ -358,8 +385,8 @@ public class DriveTrain {
                 case W:
                     if (leftStrafeValue < goalLeftStrafePosition) {
                         drive(direction, power);
-                        telemetry.addData("Current Combined Value", combinedEnValue);
-                        telemetry.addData("Goal Value", goalLeftStrafePosition);
+                        //telemetry.addData("Current Combined Value", combinedEnValue);
+                        //telemetry.addData("Goal Value", goalLeftStrafePosition);
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
@@ -371,9 +398,9 @@ public class DriveTrain {
                 case E:
                     if (rightStrafeValue < goalRightStrafePosition) {
                         drive(direction, power);
-                        telemetry.addData("Current Combined Value", rightStrafeValue);
-                        telemetry.addData("Current Goal Value", goalRightStrafePosition);
-                        telemetry.addData("Current Comparison Value", goalEncoderPosition);
+                        //telemetry.addData("Current Combined Value", rightStrafeValue);
+                        //telemetry.addData("Current Goal Value", goalRightStrafePosition);
+                        //telemetry.addData("Current Comparison Value", goalEncoderPosition);
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
@@ -390,8 +417,8 @@ public class DriveTrain {
                         } else {
                             leftFront.setPower(0);
                         }
-                        telemetry.addData("Current Right Encoder Value", getLeftEncoder());
-                        telemetry.addData("Current Yaw", getYaw());
+                        //telemetry.addData("Current Right Encoder Value", getLeftEncoder());
+                        //telemetry.addData("Current Yaw", getYaw());
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
@@ -410,8 +437,8 @@ public class DriveTrain {
                         } else {
                             leftFront.setPower(0);
                         }
-                        telemetry.addData("Current Right Encoder Value", getRightEncoder());
-                        telemetry.addData("Current Yaw", getYaw());
+                        //telemetry.addData("Current Right Encoder Value", getRightEncoder());
+                        //telemetry.addData("Current Yaw", getYaw());
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
@@ -427,8 +454,8 @@ public class DriveTrain {
                 case TURNRIGHT:
                     if (getLeftEncoder() < goalLeftPosition) {
                         drive(direction, power);
-                        telemetry.addData("Current Combined Value", combinedEnValue);
-                        telemetry.addData("Goal Value", goalEncoderPosition);
+                        //telemetry.addData("Current Combined Value", combinedEnValue);
+                        //telemetry.addData("Goal Value", goalEncoderPosition);
                     } else {
                         encodersCanRun = true;
                         //resets the encoders to a neutral value
@@ -445,19 +472,17 @@ public class DriveTrain {
     //////////////////////////////////// GYRO
 
     public boolean gyroTurn(Direction direction, double power, float degrees){
+        currentYaw = this.getYaw();
         switch(direction) {
             case TURNLEFT:
                 if (goalDegrees == -1) {
-                    goalDegrees = (this.getYaw() + degrees);
+                    goalDegrees = (currentYaw + degrees);
                     if (goalDegrees > 360) {
                         goalDegrees -= 360;
                     }
                 }
-                if (!(this.getYaw() < (goalDegrees + gyroRange) && this.getYaw() > (goalDegrees - gyroRange))) {
+                if (!(currentYaw < (goalDegrees + gyroRange) && currentYaw > (goalDegrees - gyroRange))) {
                     drive(direction, power);
-
-                    telemetry.addData("Goal Degrees", goalDegrees);
-                    telemetry.addData("Current Degrees", getYaw());
                     return false;
                 } else {
                     this.stop();
@@ -466,15 +491,14 @@ public class DriveTrain {
                 }
             case TURNRIGHT:
                 if (goalDegrees == -1) {
-                    goalDegrees = (this.getYaw() - degrees);
+                    goalDegrees = (currentYaw - degrees);
                     if (goalDegrees < 0) {
                         goalDegrees = (goalDegrees + 360);
                     }
                 }
-                if (!(this.getYaw() < (goalDegrees + gyroRange) && this.getYaw() > (goalDegrees - gyroRange))) {
+                if (!(currentYaw < (goalDegrees + gyroRange) && currentYaw > (goalDegrees - gyroRange))) {
                     drive(direction, power);
-                    telemetry.addData("Goal Degrees", goalDegrees);
-                    telemetry.addData("Current Degrees", getYaw());
+
                     return false;
                 } else {
                     this.stop();
@@ -555,18 +579,24 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public boolean straighten(double goal) {
-        yaw = this.getYaw();
-        if (yaw > (goal - 1) && yaw < (goal + 1)) {
-            if (yaw > (goal - 1)) {
-                drive(Direction.TURNLEFT, 0.2);
-            } else if (yaw < (goal + 1)) {
-                drive(Direction.TURNRIGHT, 0.2);
+    public boolean straighten(float goalDegrees) {
+        if (!(currentYaw < (goalDegrees + gyroRange) && currentYaw > (goalDegrees - gyroRange))) {
+            if (goalDegrees < getYaw()) {
+                if (isTurning = false) {
+                    gyroTurn(Direction.TURNLEFT, .3, (goalDegrees - getYaw()));
+                    isTurning = true;
+                }
+            } else {
+                if (isTurning = false) {
+                    gyroTurn(Direction.TURNRIGHT, .3, (goalDegrees + getYaw()));
+                    isTurning = true;
+                }
             }
-            return false;
         } else {
+            isTurning = false;
             return true;
         }
+        return false;
     }
 
     public void displayEncoders() {

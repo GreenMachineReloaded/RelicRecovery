@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.GMR.Autonomous.States;
 import org.firstinspires.ftc.teamcode.GMR.Robot.Robot;
+import org.firstinspires.ftc.teamcode.GMR.Robot.SubSystems.AllianceColor;
 import org.firstinspires.ftc.teamcode.GMR.Robot.SubSystems.DriveTrain;
 
 /**
@@ -47,6 +48,14 @@ public class Auto_B2 extends OpMode {
     private double currentSeconds;
     private double goalSeconds;
 
+    private String completedStates = "";
+
+    private int turnRadius = 20;
+    private double turnPower = 0.15;
+
+    private int keyColumn;
+    private double columnDist;
+
     @Override
     public void init() {
         rightFront = hardwareMap.dcMotor.get("rightfront");
@@ -63,7 +72,7 @@ public class Auto_B2 extends OpMode {
         gyroscope = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
 
 
-        robot = new Robot(hardwareMap, telemetry);
+        robot = new Robot(hardwareMap, telemetry, true);
 
         goalPosition = 0.25;
         position = 0.85;
@@ -73,25 +82,29 @@ public class Auto_B2 extends OpMode {
 
         state = States.TIME;
         isFinished = false;
+
+        keyColumn = 0;
+        columnDist = 0;
+
+        time.reset();
+
+        robot.setRelicTilt();
     }
         @Override
         public void loop(){
             currentSeconds = time.seconds();
             switch(state){
                 case TIME:
-                    state = States.GRAB;
-                    robot.blockLift.clamp(false,true, true, false);
+                    state = States.SCAN;
+                    goalSeconds = currentSeconds += 5.5;
                     break;
-                case GRAB:
-                    robot.blockLift.clamp(false,false, false, true);
-                    state = States.LIFT;
-                    goalSeconds = currentSeconds + 0.4;
-                case LIFT:
-                    if (currentSeconds >= goalSeconds) {
-                        robot.blockLift.setLift(400);
+                case SCAN:
+                    keyColumn = robot.vision.keyColumnDetect(AllianceColor.BLUE);
+                    if(keyColumn != 0 || currentSeconds >= goalSeconds){
                         state = States.ARMDOWN;
-                        goalSeconds = currentSeconds += 2.0;
+                        goalSeconds = currentSeconds += 0.5;
                     }
+                    break;
                 case ARMDOWN:
                     //Lowers right arm WORKING
                     leftArm.setPosition(goalPosition);
@@ -115,96 +128,117 @@ public class Auto_B2 extends OpMode {
                         telemetry.update();
 
                         state = States.RIGHTKNOCK;
-                    } break;
+                    }
+                    break;
 
                 case LEFTKNOCK:
                     //Knocks the left ball off of the pedestal WORKING
-                    if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.25, 0.5);
-                    } else{
+                    if(robot.driveTrain.gyroTurn(DriveTrain.Direction.TURNLEFT, turnPower, turnRadius)){
                         isFinished = false;
                         state = States.LEFTARMUP;
-                        time.reset();
                     } break;
 
                 case RIGHTKNOCK:
                     //Knocks the right ball off of the pedestal WORKING
-                    if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.25, 1);
-                    } else{
+                    if(robot.driveTrain.gyroTurn(DriveTrain.Direction.TURNRIGHT, turnPower, turnRadius)){
                         isFinished = false;
                         state = States.RIGHTARMUP;
-                        time.reset();
+                        goalSeconds = currentSeconds += 1.0;
                     } break;
 
                 case LEFTARMUP:
                     //Lifts arm up after knocking left ball WORKING
                     leftArm.setPosition(0.85);
-                    if(time.seconds() >= 1){
-                        state = States.LEFTZONE;
-                    } break;
+                    state = States.LEFTZONE;
+                    break;
 
                 case RIGHTARMUP:
                     //Lifts arm up after knocking right ball WORKING
                     leftArm.setPosition(0.85);
-                    if(time.seconds() >= 1){
+                    if(currentSeconds >= goalSeconds){
                         state = States.RIGHTZONE;
                     } break;
 
                 case LEFTZONE:
                     //Returns to original position from knocking left ball WORKING
-                    if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 9.5);
-                    } else{
+                    if(robot.driveTrain.gyroTurn(DriveTrain.Direction.TURNRIGHT, turnPower, turnRadius)){
                         isFinished = false;
-                        state = States.STRAFE;
-                        time.reset();
+                        state = States.OFFSTONE;
                     } break;
 
                 case RIGHTZONE:
                     //Returns to original position from knocking right ball WORKING
-                    if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.4, 2.5);
-                    } else{
+                    if(robot.driveTrain.gyroTurn(DriveTrain.Direction.TURNLEFT, turnPower, turnRadius)){
                         isFinished = false;
-                        state = States.STRAFE;
-                        time.reset();
+                        state = States.OFFSTONE;
                     } break;
 
+                case OFFSTONE:
+                    if(robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.2, 6.0 )) {
+                        state = States.STRAFE;
+                        completedStates += "OFFSTONE - ";
+                    }
+                    break;
                 case STRAFE:
                     //Turns left to face CryptoBox. WORKING
+                    if (keyColumn == 1){
+                        columnDist = 2.0;
+                    } else if (keyColumn == 2){
+                        columnDist = 4.0;
+                    } else if (keyColumn == 3){
+                        columnDist = 6.0;
+                    } else if (keyColumn == 0){
+                        columnDist = 4.0;
+                    }
+
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.E, 0.3, 3);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.E, 0.3, columnDist);
                     } else{
                         isFinished = false;
                         state = States.DRIVEBOX;
-                    } break;
+                        completedStates += "STRAFE - ";
+                    }
+                    break;
 
                 case DRIVEBOX:
                     //Drives into CryptoBox
                     if(!isFinished){
-                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.3, 3.5);
+                        isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.N, 0.3, 1.5);
                     } else{
                         isFinished = false;
                         state = States.DROP;
-                    } break;
+                        completedStates += "DRIVEBOX";
+                        goalSeconds = currentSeconds += 1.0;
+                    }
 
+                    break;
                 case DROP:
-                    robot.blockLift.clamp(false, false,true, false);
-                    state = States.DRIVEBACK;
+                    robot.blockLift.grab(true, 0);
+                    if (currentSeconds >= goalSeconds) {
+                        state = States.DRIVEBACK;
+                        robot.blockLift.grab(false, 0);
+                    }
                     break;
                 case DRIVEBACK:
                     if(!isFinished){
                         isFinished = robot.driveTrain.encoderDrive(DriveTrain.Direction.S, 0.3, 1.5);
                     } else{
                         isFinished = false;
-                        state = States.END;
+                        state = States.GLYPHPITTURN;
                     } break;
+                case GLYPHPITTURN:
+                    if (!isFinished) {
+                        isFinished = robot.driveTrain.gyroTurn(DriveTrain.Direction.TURNRIGHT, 0.3, 135);
+                    } else {
+                        isFinished = false;
+                        state = States.END;
+                    }break;
                 case END:
                     robot.driveTrain.stop();
                     break;
             }
-
+            telemetry.addData("Current State: ", state);
+            telemetry.addData("Completed States: ", completedStates);
         }
 
 }
